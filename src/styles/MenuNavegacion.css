@@ -1,0 +1,13 @@
+.desaparecer {
+  display: none;
+}
+
+.aparecer{
+  width: 280px;
+}
+
+.hover-btn:hover{
+    background-color: #e9e7ff; /*#e9e7ff    #aba3ff*/
+    border: 1px solid #b6afff;
+    transition: 0.3s all;
+}
