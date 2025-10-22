@@ -1,4 +1,4 @@
-.verCardMesa{
+.verCardMesa {
     background-color: rgba(46, 46, 46, 0.575);
     z-index: 1;
     display: flex;
@@ -12,6 +12,24 @@
 
 }
 
-.ocultarCardMesa{
+.ocultarCardMesa {
     display: none;
+}
+
+.responsive-card-mesas {
+        scale: 0.9;
+    }
+
+@media (max-width: 950px) and (orientation: landscape) {
+
+    .responsive-card-mesas {
+        scale: 0.6;
+    }
+
+    .verCardMesa {
+        padding-top: 0;
+        justify-content: center;
+    }
+
+
 }

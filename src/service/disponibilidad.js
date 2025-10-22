@@ -20,6 +20,15 @@ export const getHorarios = async () => {
   }
 };
 
+export const getHorario = async (diaSemana) => {
+  try {
+    const response = await api.get(`${API_URL}/horario?dia=${diaSemana}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error al traer el horario del día" + error);
+  }
+};
+
 export const getFechasBloqueadas = async () => {
   try {
     const response = await api.get(`${API_URL}/fechasBloqueadas`);

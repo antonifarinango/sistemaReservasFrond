@@ -1,33 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { getMesas, getMesaId, putMesa } from "../service/mesasService";
+import { useWebSocketReserva } from "../hooks/useWebSocketReserva";
+
+//ICONOS
+import { FaEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
+import { BsClipboardCheckFill } from "react-icons/bs";
+import { BsClipboardXFill } from "react-icons/bs";
+import { BiSolidDish } from "react-icons/bi";
+import { FaCheckCircle } from "react-icons/fa";
+
+
+//SERVICIOS
+import { getMesas, getMesaId } from "../service/mesasService";
 import {
-  getReservas,
-  getReservaId,
   crearReserva,
   putReserva,
   eliminarReserva, //
 } from "../service/reservasService";
+import { formatearFecha, formatearHora } from "../service/formatearFechaHora";
 
 export default function Reservas() {
   const [mesas, setMesas] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [active, setActive] = useState(false);
   const [idMesa, setIdMesa] = useState("");
+  const [idReserva, setIdReserva] = useState("");
+  const [reservaObtenida, setReservaObtenida] = useState([]);
+  const [activeAcciones, setActiveAcciones] = useState(false);
 
-  // Estados del form
+  //ESTADOS DEL FORM 
   const [fechaReserva, setFechaReserva] = useState("");
   const [horaReserva, setHoraReserva] = useState("");
   const [turnoReserva, setTurnoReserva] = useState(null);
   const [cantidadPersonasReserva, setCantidadPersonasReserva] = useState("");
-
   const [editReservaId, setEditReservaId] = useState(null);
+  const [estadoFila, setEstadoFila] = useState("");
+
   //CARGAR MESAS
   useEffect(() => {
-    getMesas().then(setMesas);
+    getMesas().then((mesas) => {
+
+      const mesasActivas = mesas.filter((m) => m.activa === true);
+      setMesas(mesasActivas);
+
+    });
   }, []);
 
   function handleClickMesaId(id) {
     setIdMesa(id);
+    setReservaObtenida([]);
+  }
+
+
+  function handleClickReserva(id, reserva) {
+    setIdReserva(id);
+    setReservaObtenida(reserva);
+    setEstadoFila(reserva.estadoReserva);
   }
 
   //OBTENER LISTA DE RESERVAS POR MESA
@@ -38,9 +66,14 @@ export default function Reservas() {
       });
     }
   }
+
+  useWebSocketReserva(() => {
+    loadReservas();
+  });
+
   useEffect(() => {
     loadReservas();
-  }, [idMesa]);
+  }, [idMesa]); //
 
   // GUARDAR O ACTUALIZAR
   function guardarReserva() {
@@ -98,6 +131,7 @@ export default function Reservas() {
     eliminarReserva(id)
       .then(() => {
         loadReservas();
+        setReservaObtenida(!reservaObtenida.id);
       })
       .catch((err) => console.error("Error al eliminar", err));
   }
@@ -108,12 +142,18 @@ export default function Reservas() {
       fecha: reserva.fecha,
       turno: reserva.turno,
       estadoReserva: "Confirmada",
+      servicio: "SinServicio",
       cantidadPersonas: reserva.cantidadPersonas,
-      mesa: reserva.mesa,
-    };
+      mesa: reserva.mesa
+    }
     putReserva(res, reserva.id)
       .then(() => {
         loadReservas();
+        setReservaObtenida({ ...reserva, estadoReserva: "Confirmada" });
+        setEstadoFila("Confirmada")
+        console.log("Confirmada");
+        console.log(res);
+        console.log(reserva.mesa);
       })
       .catch((err) => console.error("Error al actualizar", err));
   }
@@ -124,98 +164,232 @@ export default function Reservas() {
       fecha: reserva.fecha,
       turno: reserva.turno,
       estadoReserva: "Pendiente",
+      servicio: "SinServicio",
       cantidadPersonas: reserva.cantidadPersonas,
-      mesa: reserva.mesa,
+      mesa: reserva.mesa
     };
     putReserva(res, reserva.id)
       .then(() => {
         loadReservas();
+        setReservaObtenida({ ...reserva, estadoReserva: "Pendiente" });
+        setEstadoFila("Pendiente")
+        console.log("Cancelada");
+        console.log(res);
+        console.log(reserva.id);
+      })
+      .catch((err) => console.error("Error al actualizar", err));
+  }
+
+
+  //RESERVA EN SERVICIO
+
+  function reservaEnServicio(reserva) {
+    const res = {
+      fecha: reserva.fecha,
+      turno: reserva.turno,
+      servicio: "EnServicio",
+      estadoReserva: estadoFila,
+      cantidadPersonas: reserva.cantidadPersonas,
+      mesa: reserva.mesa
+    };
+    putReserva(res, reserva.id)
+      .then(() => {
+        loadReservas();
+        setReservaObtenida({ ...reserva, estadoReserva: estadoFila });
+        console.log("Cancelada");
+        console.log(res);
+        console.log(reserva.id);
+      })
+      .catch((err) => console.error("Error al actualizar", err));
+  }
+
+  //FINALIZAR RESERVA
+
+  function reservaFinalizada(reserva) {
+    const res = {
+      fecha: reserva.fecha,
+      turno: reserva.turno,
+      servicio: "Finalizada",
+      estadoReserva: estadoFila,
+      cantidadPersonas: reserva.cantidadPersonas,
+      mesa: reserva.mesa
+    };
+    putReserva(res, reserva.id)
+      .then(() => {
+        loadReservas();
+        setReservaObtenida({ ...reserva, estadoReserva: estadoFila });
+        console.log("Cancelada");
+        console.log(res);
+        console.log(reserva.id);
       })
       .catch((err) => console.error("Error al actualizar", err));
   }
 
   return (
-    <div className="container-fluid">
+    <div className="responsive-container container">
       <div className="container h-100 p-0">
-        <h1 className="mt-3">Reservas</h1>
+        <h1 className="responsive-h1 mt-3">Reservas</h1>
 
-        <div
+        <div className="responsive-configuracion-mesas"
           style={{
             borderRadius: "5px",
             background: "#F0F0F0",
             marginTop: "20px",
             display: "grid",
-            gridTemplateColumns: "repeat(6, 1fr)",
-            gridTemplateRows: "repeat(4, 1fr)",
             gap: "10px",
             padding: "10px",
-            width: "100%",
             height: "700px",
           }}
         >
           {/* Columna mesas */}
           <div
-            className="d-flex flex-column p-2 justify-content-center align-items-center"
+            className="responsive-mesasConfig-mesas d-flex flex-column p-2 justify-content-center align-items-center"
             style={{
               gap: "5px",
-              gridColumn: "1/ 2",
-              gridRow: "1 / 5",
               backgroundColor: "#fff",
             }}
           >
-            <h5 className="text-primary">Mesas</h5>
+            <h5 className="responsive-h5-config-mesas text-primary">Mesas</h5>
             {mesas
               .slice()
               .sort((a, b) => a.numero - b.numero)
-              .map((mesa) => (
-                <div className="w-75" key={mesa.id}>
-                  <button
-                    className={`btn w-100 p-1 ${
-                      idMesa === mesa.id ? "btn-primary" : "btn-secondary"
-                    }`}
-                    onClick={() => handleClickMesaId(mesa.id)}
-                  >
-                    Mesa {mesa.numero}
-                  </button>
-                </div>
-              ))}
+              .map((mesa) => {
+
+                return (
+
+                  <div className="w-75" key={mesa.id}>
+                    <button
+                      className={`btn w-100 p-1 ${idMesa === mesa.id ? "btn-primary" : "btn-secondary"
+                        }`}
+                      onClick={() => handleClickMesaId(mesa.id)}
+                    >
+                      Mesa {mesa.numero}
+                    </button>
+                  </div>
+
+                )
+
+              })}
           </div>
 
           {/* Columna reservas */}
           <div
-            className="d-flex flex-column"
-            style={{ gridColumn: "2/7", gridRow: "1 / 5" }}
+            className="responsive-edit-mesas d-flex flex-column"
+
           >
             {/* Header */}
             <div
-              className={`container d-flex justify-content-end p-2 ${
-                active ? "gap-2" : ""
-              }`}
+              className={`container d-flex  p-2 ${active ? "gap-2 justify-content-end" : "justify-content-between"
+                }`}
               style={{ backgroundColor: "#fff" }}
             >
-              <button
-                className="btn btn-success"
-                style={{ display: active ? "none" : "flex" }}
-                onClick={() => setActive(true)}
-              >
-                Crear Reserva
-              </button>
+              <div
+                className="col-10 gap-2"
+                style={{ display: `${active ? "none" : "flex"}` }}>
+                <div className="w-50 d-flex gap-2">
+                  <button
+                    disabled={
+                      !reservaObtenida.id
+                    }
+                    className="btn text-light py-0" style={{ backgroundColor: "#45537A", width: "50px", height: "45px" }}
+                    onClick={() => editarReserva(reservaObtenida)}
+                  >
+                    <FaEdit className="fs-4" />
+                  </button>
 
-              <button
-                className="btn btn-info"
-                style={{ display: active ? "flex" : "none" }}
-                onClick={() => guardarReserva()}
-              >
-                {editReservaId ? "Actualizar" : "Guardar"}
-              </button>
+                  <button
+                    disabled={
+                      !reservaObtenida.id || reservaObtenida.estadoReserva === "Confirmada"
+                    }
+                    className={`btn ${!reservaObtenida.id
+                      ? "btn-secondary"
+                      : reservaObtenida.estadoReserva === "Confirmada"
+                        ? "btn-secondary"
+                        : "btn-success"
+                      }`}
+                    style={{ width: "50px", height: "45px" }}
+                    onClick={() => confirmarReserva(reservaObtenida)}
+                  >
+                    <BsClipboardCheckFill className="fs-4" />
+                  </button>
 
-              <button
-                className="btn btn-danger"
-                style={{ display: active ? "flex" : "none" }}
-                onClick={() => resetForm()}
-              >
-                X
-              </button>
+                  <button
+                    disabled={
+                      !reservaObtenida.id || reservaObtenida.estadoReserva === "Pendiente"
+                    }
+                    className={`btn me-5 ${!reservaObtenida.id
+                      ? "btn-secondary"
+                      : reservaObtenida.estadoReserva === "Pendiente"
+                        ? "btn-secondary"
+                        : "btn-danger"
+                      }`}
+                    style={{ width: "50px", height: "45px" }}
+                    onClick={() => cancelarReserva(reservaObtenida)}
+                  >
+                    <BsClipboardXFill className="fs-4" />
+                  </button>
+
+                  <button
+                    className="btn btn-success col-4" style={{ width: "50px", height: "45px" }}
+                    disabled={
+                      !reservaObtenida.id || reservaObtenida.estadoReserva === "Pendiente"
+                    }
+                    onClick={() => reservaEnServicio(reservaObtenida)}
+                  >
+                    <BiSolidDish className="fs-4" />
+                  </button>
+
+
+                  <button
+                    className="btn col-4" style={{ backgroundColor: "#45537A", width: "50px", height: "45px" }}
+                    disabled={
+                      !reservaObtenida.id || reservaObtenida.estadoReserva === "Pendiente"
+                    }
+                    onClick={() => reservaFinalizada(reservaObtenida)}
+                  >
+                    <FaCheckCircle className="fs-4 text-light" />
+                  </button>
+
+                  <button
+                    disabled={
+                      !reservaObtenida.id
+                    }
+                    className="btn btn-danger" style={{ width: "50px", height: "45px" }}
+                    onClick={() => borrarReserva(idReserva)}
+                  >
+                    <MdDeleteForever className="fs-3" />
+                  </button>
+
+                </div>
+
+              </div>
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-success py-2"
+                  style={{ display: active ? "none" : "flex", height: "45px" }}
+                  onClick={() => setActive(true)}
+                  disabled={!idMesa}
+                >
+                  Crear
+                </button>
+
+                <button
+                  className="btn btn-info"
+                  style={{ display: active ? "flex" : "none" }}
+                  onClick={() => guardarReserva()}
+                >
+                  {editReservaId ? "Actualizar" : "Guardar"}
+                </button>
+
+                <button
+                  className="btn btn-danger"
+                  style={{ display: active ? "flex" : "none" }}
+                  onClick={() => resetForm()}
+                >
+                  X
+                </button>
+              </div>
+
             </div>
 
             {/* Formulario */}
@@ -240,6 +414,7 @@ export default function Reservas() {
                   onChange={(e) => setFechaReserva(e.target.value)}
                   type="date"
                   className="form-control"
+                  min={new Date().toLocaleDateString("en-CA")}
                 />
 
                 <label className="text-primary fw-bolder">
@@ -267,8 +442,8 @@ export default function Reservas() {
 
             {/* Tabla */}
             <div
-              className="flex-grow-1 container p-3"
-              style={{ display: active ? "none" : "flex", height:"400px"}}
+              className="flex-grow-1 container px-0 py-3"
+              style={{ display: active ? "none" : "flex", height: "400px" }}
             >
               <div className="table-responsive w-100">
                 <table className="table">
@@ -278,60 +453,43 @@ export default function Reservas() {
                       <th>Hora</th>
                       <th>Turno</th>
                       <th>C. Personas</th>
-                      <th>Acciones</th>
+                      <th>Estado</th>
+                      <th>Servicio</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {reservas.map((reserva) => {
-                      const [soloFecha, soloHora] = reserva.fecha.split("T");
-                      const [yyyy, mm, dd] = soloFecha.split("-");
-                      const fecha = dd + "-" + mm + "-" + yyyy;
-                      return (
-                        <tr
-                          key={reserva.id}
-                          className="text-center align-middle"
-                        >
-                          <td>{fecha}</td>
-                          <td>{soloHora}</td>
-                          <td>{reserva.turno}</td>
-                          <td>{reserva.cantidadPersonas}</td>
-                          <td>
-                            <div className="d-flex gap-2 justify-content-center">
-                              <button
-                                className="btn btn-info w-25"
-                                onClick={() => editarReserva(reserva)}
-                              >
-                                E
-                              </button>
-                              <button
-                                className="btn btn-danger w-25"
-                                onClick={() => borrarReserva(reserva.id)}
-                              >
-                                E
-                              </button>
-                              <button
-                                disabled={
-                                  reserva.estadoReserva === "Confirmada"
-                                }
-                                className={`btn w-25 ${reserva.estadoReserva === "Confirmada" ? "btn-secondary": "btn-success"}`}
-                                onClick={() => confirmarReserva(reserva)}
-                              >
-                                C
-                              </button>
-                              <button
-                                disabled={
-                                  reserva.estadoReserva === "Pendiente"
-                                }
-                                className={`btn w-25 ${reserva.estadoReserva === "Confirmada" ? "btn-danger": "btn-secondary"}`}
-                                onClick={() => cancelarReserva(reserva)}
-                              >
-                                Ca
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {reservas
+                      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                      .map((reserva) => {
+                        const [fecha, hora] = reserva.fecha.split("T");
+
+                        return (
+                          <tr
+                            key={reserva.id}
+                            className={`text-center align-middle ${idReserva === reserva.id ? "table-primary" : ""
+                              }`}
+
+                            style={{ cursor: "pointer", backgroundColor: "" }}
+                            onClick={() => handleClickReserva(reserva.id, reserva)}
+                          >
+                            <td>{formatearFecha(fecha)}</td>
+                            <td>{formatearHora(hora)}</td>
+                            <td>{reserva.turno}</td>
+                            <td>{reserva.cantidadPersonas}</td>
+                            <td className={`fw-semibold ${reserva.estadoReserva == "Pendiente" ? "text-danger" : ""}`} >{reserva.estadoReserva}</td>
+                            <td>
+                              {reserva.servicio === "SinServicio"
+                                ? "-----"
+                                : reserva.servicio === "EnServicio"
+                                  ? "En Servicio"
+                                  : "Finalizada"}
+
+                            </td>
+
+                          </tr>
+                        );
+
+                      })}
                   </tbody>
                 </table>
               </div>
@@ -340,5 +498,6 @@ export default function Reservas() {
         </div>
       </div>
     </div>
+
   );
 }

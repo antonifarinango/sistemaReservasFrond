@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebSocketReserva } from "../hooks/useWebSocketReserva";
 
 import {
   getReservasDia,
@@ -6,187 +7,209 @@ import {
   getReservasProximas,
 } from "../service/reservasService";
 
+import { getMesas } from "../service/mesasService";
+import { formatearFecha, formatearHora } from "../service/formatearFechaHora";
+
 export default function Dashboard() {
   const [listaDia, setListaDia] = useState([]);
   const [listaPendientes, setListaPendientes] = useState([]);
   const [listaProximas, setListaProximas] = useState([]);
+  const [porcentajeOcupacionActual, setPorcentajeOcupacionActual] = useState("0%");
+  const [mesasOcupadas, setMesasOcupadas] = useState([]);
+  const [mesasTotales, setMesasTotales] = useState([]);
 
   useEffect(() => {
     getReservasDia().then(setListaDia);
     getReservasPendientes().then(setListaPendientes);
     getReservasProximas().then(setListaProximas);
-  }, [listaDia, listaPendientes, listaProximas]);
+  }, []);
+
+  useWebSocketReserva(() => {
+    getReservasPendientes().then(setListaPendientes);
+  });
+
+  //CARGAR MESAS
+  useEffect(() => {
+    getMesas().then((mesas) => {
+
+
+      const mesasActivas = mesas.filter((m) => m.activa === true);
+
+      const mesasOcupadas = mesasActivas.filter((m) => m.estadoActual === "Ocupada");
+      setMesasOcupadas(mesasOcupadas.length);
+
+      const totalMesas = mesasActivas.length;
+      setMesasTotales(totalMesas);
+
+    });
+  }, []);
+
+  useEffect(() => {
+
+    if (mesasOcupadas > 0) {
+      setPorcentajeOcupacionActual(((mesasOcupadas / mesasTotales) * 100).toFixed(0) + "%");
+    } else {
+      setPorcentajeOcupacionActual("0%");
+    }
+
+
+
+  }, [mesasOcupadas]);
 
   return (
-    <div className="container h-100 p-0 d-flex align-items-center">
+    <div className="responsive-container container"> 
+       <div className="responsive-horizontal-dashboard p-2 container-fluid d-flex align-items-center d-flex flex-column mt-5" style={{ backgroundColor: "#F0F0F0" }}>
+
       <div
+      className="responsive-grid-dashboard"
         style={{
           borderRadius: "5px",
-          display: "grid",
-          gridTemplateColumns: "repeat(10, 1fr)",
-          gridTemplateRows: "repeat(5, 1fr)",
           gap: "10px",
           width: "100%",
-          height: "750px",
+          height: "auto",
         }}
       >
+        <div className="responsive-titulo-dashboard rounded-1">
+          <h2>Dashboard</h2>
+        </div>
         <div
-          className="d-flex flex-column gap-2 justify-content-center align-items-center"
-          style={{ gridColumn: "1/4", gridRow: "1/3" }}
+          className="responsive-porcentaje-dashboard d-flex flex-column gap-2 justify-content-center align-items-center"
         >
           <div
-            className="bg-warning d-flex w-100 align-items-center justify-content-center"
-            style={{ height: "60px", borderRadius: "16px" }}
+            className="d-flex w-100 align-items-center justify-content-center rounded-1 text-light"
+            style={{ height: "50px", backgroundColor: "#45537A" }}
           >
-            <h4>Ocupación</h4>
+            <h5 className="responsive-h5">Mesas Ocupadas</h5>
           </div>
 
           <div
-            className="d-flex flex-grow-1 w-100 align-items-center justify-content-center"
-            style={{ borderRadius: "16px", boxSizing: "border-box" }}
+            className="d-flex flex-grow-1 w-100 align-items-center justify-content-center rounded-1"
+            style={{ boxSizing: "border-box", backgroundColor: "#45537A" }}
           >
-            <div
-              className="bg-primary d-flex justify-content-center align-items-center"
-              style={{
-                borderRadius: "100%",
-                height: "100%",
-                width: "60%",
-                padding: "6px",
-                border: "3px dashed #fff",
-              }}
-            >
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{
-                  borderRadius: "100%",
-                  height: "100%",
-                  width: "100%",
-                  border: "3px dashed #fff",
-                }}
-              >
-                <span className="fw-semibold" style={{ fontSize: "70px" }}>
-                  70%
+                <span className="responsive-span-porcentaje text-light" style={{ fontSize: "55px" }}>
+                  {porcentajeOcupacionActual}
                 </span>
-              </div>
-            </div>
           </div>
         </div>
         <div
-          className="d-flex flex-column justify-content-center align-items-center gap-2"
-          style={{ gridColumn: "4/6", gridRow: "1/3" }}
+          className="responsive-pendientes-dashboard d-flex flex-column justify-content-center align-items-center gap-2"
+          
         >
           <div
-            className="bg-success d-flex w-100 align-items-center justify-content-center"
-            style={{ height: "60px", borderRadius: "16px" }}
+            className="d-flex w-100 align-items-center justify-content-center rounded-1 text-light"
+            style={{ height: "50px", backgroundColor: "#45537A" }}
           >
-            <h4>Reservas Pendientes</h4>
+            <h5 className="responsive-h5">Reservas Pendientes</h5>
           </div>
           <div
-            className="bg-primary d-flex flex-grow-1 w-100 align-items-center justify-content-center"
-            style={{ borderRadius: "16px" }}
+            className="d-flex flex-grow-1 w-100 align-items-center justify-content-center rounded-1 text-light"
+            style={{ backgroundColor: "#45537A" }}
           >
-            <span className="" style={{ fontSize: "120px" }}>
+            <p className="responsive-p-pendientes" style={{ fontSize: "100px" }}>
               {listaPendientes.length}
-            </span>
+            </p>
           </div>
         </div>
         <div
-          className="d-flex flex-column gap-2"
-          style={{ gridColumn: "1/6", gridRow: "3/6" }}
+          className="responsive-dia-dashboard d-flex flex-column gap-2"
         >
           <div
-            className="bg-secondary d-flex w-100 align-items-center justify-content-center"
-            style={{ height: "60px", borderRadius: "16px" }}
+            className="card d-flex w-100 align-items-center justify-content-center rounded-1"
+            style={{ height: "50px", backgroundColor: "#fff" }}
           >
-            <h4>Reservas para hoy</h4>
+            <h5 className="responsive-h5">Reservas del día</h5>
           </div>
           <div
-            className="bg-primary d-flex flex-grow-1 flex-column w-100 align-items-start justify-content-start gap-2"
-            style={{ borderRadius: "16px", padding: "10px 7px" }}
+            className="card d-flex flex-column w-100 align-items-start justify-content-start gap-2 rounded-1"
+            style={{ padding: "10px 7px", backgroundColor: "#fff", height: "422px", overflowY: "auto", overflowX: "hidden", scrollbarColor: "#45537A #fff" }}
           >
             {listaDia.map((reserva) => (
               <div
                 key={reserva.id}
-                className="container bg-danger d-flex justify-content-center align-items-center"
-                style={{ borderRadius: "14px", height: "50px" }}
+                className="container d-flex justify-content-center align-items-center "
+                style={{ minHeight: "46px", borderBottom: "1px solid black", backgroundColor: "#e2e2e2ff" }}
               >
                 <div
                   className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
+                  style={{ borderRight: "1px solid #000000ff", height: "50%" }}
                 >
-                  d
+                  Mesa {reserva.mesa.numero}
                 </div>
                 <div
                   className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
+                  style={{ borderRight: "1px solid #000000ff", height: "50%" }}
                 >
-                  f
+                  {reserva.cantidadPersonas} {`${reserva.cantidadPersonas > 1 ? "Personas" : "Persona"}`}
                 </div>
                 <div
                   className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
+                  style={{ borderRight: "1px solid #000000ff", height: "50%" }}
                 >
-                  d
+                  {formatearHora(reserva.fecha.split("T")[1].split(":").slice(0, 2).join(" : "))}
                 </div>
                 <div
                   className="col-4 d-flex justify-content-center align-items-center"
                   style={{}}
                 >
-                  d
+                  {formatearFecha(reserva.fecha.split("T")[0])}
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div
-          className="gap-2 d-flex flex-column"
-          style={{ gridColumn: "6/11", gridRow: "1/6" }}
+          className="responsive-proximas-dashboard gap-2 d-flex flex-column"
         >
           <div
-            className="bg-warning d-flex w-100 align-items-center justify-content-center"
-            style={{ height: "60px", borderRadius: "16px" }}
+            className="card d-flex w-100 align-items-center justify-content-center rounded-1"
+            style={{ height: "50px", backgroundColor: "#fff" }}
           >
-            <h4>Reservas Pendientes</h4>
+            <h5 className="responsive-h5">Próximas reservas</h5>
           </div>
           <div
-            className="bg-primary d-flex flex-grow-1 w-100 align-items-start justify-content-start flex-column gap-2"
-            style={{ borderRadius: "16px", padding: "10px 7px" }}
+            className="card d-flex w-100 align-items-start justify-content-start flex-column gap-2 rounded-1"
+            style={{ padding: "10px 7px", backgroundColor: "#fff", overflowY: "auto", overflowX: "hidden", scrollbarColor: "#45537A #fff", height: "750px" }}
           >
-            {listaProximas.map((reserva) => (
-              <div
-                key={reserva.id}
-                className="container bg-danger d-flex justify-content-center align-items-center"
-                style={{ borderRadius: "14px", height: "50px" }}
-              >
+            {listaProximas
+              .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+              .map((reserva) => (
                 <div
-                  className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
+                  key={reserva.id}
+                  className="container d-flex justify-content-center align-items-center"
+                  style={{ minHeight: "49px", borderBottom: "1px solid black", backgroundColor: "#e2e2e2ff" }}
                 >
-                  d
+                  <div
+                    className="col-3 d-flex justify-content-center align-items-center"
+                    style={{ borderRight: "1px solid #000000ff", height: "50%" }}
+                  >
+                    Mesa {reserva.mesa.numero}
+                  </div>
+                  <div
+                    className="col-3 d-flex justify-content-center align-items-center"
+                    style={{ borderRight: "1px solid #000000ff", height: "50%" }}
+                  >
+                    {reserva.cantidadPersonas} {`${reserva.cantidadPersonas > 1 ? "Personas" : "Persona"}`}
+                  </div>
+                  <div
+                    className="col-3 d-flex justify-content-center align-items-center"
+                    style={{ borderRight: "1px solid #000000ff", height: "50%" }}
+                  >
+
+                    {formatearHora(reserva.fecha.split("T")[1].split(":").slice(0, 2).join(" : "))}
+                  </div>
+                  <div
+                    className="col-4 d-flex justify-content-center align-items-center"
+                    style={{}}
+                  >
+                    {formatearFecha(reserva.fecha.split("T")[0])}
+                  </div>
                 </div>
-                <div
-                  className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
-                >
-                  f
-                </div>
-                <div
-                  className="col-3 d-flex justify-content-center align-items-center"
-                  style={{ borderRight: "3px solid #fff", height: "50%" }}
-                >
-                  d
-                </div>
-                <div
-                  className="col-4 d-flex justify-content-center align-items-center"
-                  style={{}}
-                >
-                  d
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
     </div>
+    </div>
+   
   );
 }

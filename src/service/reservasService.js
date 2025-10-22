@@ -40,10 +40,18 @@ export const crearReserva = async (reserva) => {
         "Content-Type": "application/json",
       },
     });
-    return response.data;
+
+
+    const {mensaje, reserva: reservaCreada} = response.data;
+
+    alert(mensaje);
+    return reservaCreada;
+
+
   } catch (error) {
     if (error.response) {
-      alert(error.response.data.error); // mensaje del backend
+      alert(error.response.data.error);
+      window.location.href("/reserva");
     }
   }
 };

@@ -7,6 +7,11 @@ export const getMesas = async () => {
   return response.data;
 };
 
+export const getMesasDisponibles = async (fecha, hora) => {
+  const response = await api.get(`${API_URL}/disponibles?fecha=${fecha}T${hora}:00`);
+  return response.data;
+};
+
 export const getMesaId = async (id) => {
   const response = await api.get(`${API_URL}/administracion/${id}`,{
     headers:{

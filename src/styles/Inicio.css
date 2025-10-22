@@ -1,0 +1,158 @@
+header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  height: 120px;
+  background-color: rgb(255, 255, 255);
+  backdrop-filter: blur(16px);  
+}
+
+.logo-header{
+    height: 75%;
+}
+
+
+.hero-section{
+    height: 700px;
+    background-image: url("../assets/inicio/hero.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.mascara-hero{
+    background-color: rgba(0, 0, 0, 0.318);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.texto-hero{
+    z-index: 99;
+}
+
+.btn-reserva{
+    background-color: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+}
+
+.btn-reserva:hover{
+    background-color: #fff;
+    color: #000;
+}
+
+
+
+
+
+.about-section{
+    height: 600px;
+    background-color: #fff;
+}
+
+.about-img{
+    background-image: url('../assets/inicio/about.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+
+
+
+.fotos-section{
+    height: 600px;
+    background-color: #fff;
+}
+
+.card-inicio-1{
+    width: 32%;
+    height: 450px;
+    background-image: url('../assets/inicio/img-fotos-1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+.card-inicio-2{
+    width: 32%;
+    height: 450px;
+    background-image: url('../assets/inicio/img-fotos-2.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+.card-inicio-3{
+    width: 32%;
+    height: 450px;
+    background-image: url('../assets/inicio/img-fotos-3.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.btn-reserva-fotos{
+    background-color: transparent;
+    border: 2px solid #000000;
+    color: #000000;
+    letter-spacing: 1px;
+}
+
+.btn-reserva-fotos:hover{
+    background-color: #000000;
+    color: #ffffff;
+}
+
+
+
+
+
+.hero2-section{
+    height: 450px;
+    position: relative;
+    background-color: #fff;
+}
+
+.hero-2-img{
+    background-image: url('../assets/inicio/hero2-img.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.dv-absolute-hero2{
+    position: absolute;
+    top: 0;
+    right: 120px;
+    width: 500px;
+    height: 100%;
+    background-color: #000000;
+    color: #fff;
+}
+
+
+footer{
+    background-color: #ffffff;
+    padding: 50px 0;
+    height: 400px;
+    justify-content: space-around;
+
+}
+
+.container-footer{
+    width: 32%;
+}
+
+.redes-footer{
+    width: 50px;
+    height: 50px;
+    background-color: #000;
+    border-radius: 100%;
+}
+
+.logo-footer{
+    height: 80%;
+}

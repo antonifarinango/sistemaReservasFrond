@@ -2,12 +2,76 @@
   display: none;
 }
 
-.aparecer{
-  width: 280px;
+.aparecer {
+  width: 270px;
+  min-width: 270px;
 }
 
-.hover-btn:hover{
-    background-color: #e9e7ff; /*#e9e7ff    #aba3ff*/
-    border: 1px solid #b6afff;
-    transition: 0.3s all;
+.hover-btn {
+  background-color: #ffffff;
+}
+
+.hover-btn:hover {
+  background-color: #e9e7ff;
+  /*#e9e7ff    #aba3ff*/
+  border: 1px solid #b6afff;
+  transition: 0.3s all;
+}
+
+.hover-btn-desactivada {
+  background-color: #c4c4c4c4;
+  /*#45537A*/
+  pointer-events: none;
+}
+
+
+.container-push-visible {
+  flex-direction: column;
+  display: flex;
+  background-color: transparent;
+  position: absolute;
+  left: 0;
+  top: 350px;
+  height: 55%;
+  width: 290px;
+  align-items: center;
+  gap: 10px;
+}
+
+.push-visible {
+  width: 90%;
+  overflow: hidden;
+  animation: aparecer 0.4s ease-out forwards;
+}
+
+@keyframes aparecer {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  60% {
+    opacity: 0.7;
+    transform: translateY(5px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width:950px) and (orientation: landscape) {
+
+  .container-push-visible {
+    top: 0;
+    left: 410px;
+    z-index: 1;
+    height: 100px;
+  }
+
+  .push-visible {
+    margin-top: 5px;
+  }
+
 }

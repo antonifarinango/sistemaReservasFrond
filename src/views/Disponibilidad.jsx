@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
 
+//ICONOS
+import { FaEdit } from "react-icons/fa";
+import { IoIosSave } from "react-icons/io";
+import { IoCloseCircleSharp } from "react-icons/io5";
+import { MdOutlineClose } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
+
 //SERVICIOS
 import {
   getFechasBloqueadas,
@@ -11,9 +18,10 @@ import {
   putHorario,
   putTurno
 } from "../service/disponibilidad";
+import { formatearFecha, formatearHora } from "../service/formatearFechaHora";
 
 export default function Disponibilidad() {
-  /***************************************** CARGAR INFORMACIÓN AL INICIAR ****************************************/
+  /******************** CARGAR INFORMACIÓN AL INICIAR *************************/
   const [listaHorarios, setListaHorarios] = useState([]);
   const [listaTurnos, setListaTurnos] = useState([]);
   const [listaFechasBloqueadas, setListaFechasBloqueadas] = useState([]);
@@ -24,14 +32,15 @@ export default function Disponibilidad() {
     getFechasBloqueadas().then(setListaFechasBloqueadas);
   }, []);
 
-  /***************************************** FECHAS BLOQUEADAS ****************************************/
+  /******************** FIN CARGAR INFORMACIÓN AL INICIAR *************************/
 
-  //FECHASBLOQUEADAS
+  /********************************FECHAS BLOQUEADAS *******************************/
+
+  //FECHAS BLOQUEADAS
   const [fecha, setFecha] = useState("");
   const [motivo, setMotivo] = useState("");
   const [idFechaBloqueada, setIdFechaBloqueada] = useState("");
-  const [activateVistaFechaBloqueada, setActiveVistaFechaBloqueada] =
-    useState(false);
+  const [activateVistaFechaBloqueada, setActiveVistaFechaBloqueada] = useState(false);
   const [activateEditar, setActiveEditar] = useState(false);
 
   function eliminarFecha(id) {
@@ -98,6 +107,8 @@ export default function Disponibilidad() {
     "Domingo",
   ];
 
+  /******************************** FIN FECHAS BLOQUEADAS *******************************/
+
   /***************************************** HORARIOS ****************************************/
   const [datosHorarios, setDatosHorarios] = useState([]);
   const [activateVistaHorario, setActiveVistaHorario] = useState(false);
@@ -107,7 +118,7 @@ export default function Disponibilidad() {
     setActiveVistaHorario(!activateVistaHorario);
   }
 
-  function detectarCambio(id, value, campo) {
+  function detectarCambioHorario(id, value, campo) {
     const listaActualizada = listaHorarios.map((h) =>
       h.id === id ? { ...h, [campo]: value } : h
     );
@@ -133,6 +144,8 @@ export default function Disponibilidad() {
     }
   }
 
+  /***************************************** FIN HORARIOS ****************************************/
+
   /***************************************** TURNOS ****************************************/
 
   const [datosTurnos, setDatosTurnos] = useState([]);
@@ -144,7 +157,7 @@ export default function Disponibilidad() {
     setActiveVistaTurno(!activateVistaTurno);
   }
 
-  function detectarCambio(id, value, campo) {
+  function detectarCambioTurno(id, value, campo) {
     const listaActualizada = listaTurnos.map((t) =>
       t.id === id ? { ...t, [campo]: value } : t
     );
@@ -164,48 +177,46 @@ export default function Disponibilidad() {
   function actualizarTurnos() {
     if (datosTurnos.length !== 0) {
       putTurno(datosTurnos).then(() => {
-        setDatosHorarios([]);
+        setDatosTurnos([]);
         loadTurnos();
       });
     }
   }
 
+  /***************************************** FIN TURNOS ****************************************/
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-0">
       <div className="container h-100 p-0">
-        <h1 className="mt-3">Disponibilidad</h1>
+        <h1 className="responsive-h1 mt-3">Disponibilidad</h1>
 
-        <div
+        <div className="responsive-diponibilidad"
           style={{
             borderRadius: "5px",
             background: "#F0F0F0",
             marginTop: "20px",
             display: "grid",
-            gridTemplateColumns: "repeat(15, 1fr)",
-            gridTemplateRows: "repeat(6, 1fr)",
             gap: "10px",
             padding: "10px",
             width: "100%",
-            height: "700px",
+            height: "auto"
           }}
         >
           {/*************************************** HORARIOS *************************************************/}
           <div
-            className="bg-warning d-flex flex-column gap-3"
-            style={{ gridRow: "1/5", gridColumn: "1/7" }}
+            className="responsive-horarios-diponibilidad d-flex flex-column gap-3"
           >
-            <div className="d-flex justify-content-around bg-secondary py-1">
-              <h4 className="mb-0 p-2">Horarios</h4>
+            <div className="d-flex justify-content-around py-1 rounded-1" style={{ backgroundColor: "#45537A" }}>
+              <h5 className="responsive-h5 mb-0 p-2 text-light">Horarios</h5>
 
               <div
                 className="justify-content-end w-50"
                 style={{ display: `${activateVistaHorario ? "none" : "flex"}` }}
               >
                 <button
-                  className="btn btn-info p-0"
+                  className="btn text-light p-0"
                   onClick={() => setActiveVistaHorario(!activateVistaHorario)}
                 >
-                  Editar
+                  <FaEdit className="fs-4" />
                 </button>
               </div>
 
@@ -214,54 +225,61 @@ export default function Disponibilidad() {
                 style={{ display: `${activateVistaHorario ? "flex" : "none"}` }}
               >
                 <button
-                  className="btn btn-info py-0"
+                  className="btn text-light py-0"
                   onClick={() => actualizarHorarios()}
                 >
-                  Actualizar
+                  <IoIosSave className="fs-3"/>
                 </button>
                 <button
-                  className="btn btn-danger  py-0"
+                  className="btn text-light py-0"
                   onClick={() => setActiveVistaHorario(!activateVistaHorario)}
                 >
-                  X
+                  <IoCloseCircleSharp className="fs-2" />
                 </button>
               </div>
             </div>
 
             <div
-              className="flex-column gap-2"
+              className="card table-responsive w-100 rounded-1"
               style={{ display: `${activateVistaHorario ? "none" : "flex"}` }}
             >
-              {listaHorarios
-                .sort(
-                  (a, b) =>
-                    diasSemana.indexOf(a.diaSemana) -
-                    diasSemana.indexOf(b.diaSemana)
-                )
-                .map((horario) => (
-                  <div
-                    key={horario.id}
-                    style={{ height: "45px" }}
-                    className="d-flex justify-content-center align-items-center gap-4"
-                  >
-                    <div className="" style={{ width: "100px" }}>
-                      <span className="fw-bold">{horario.diaSemana}</span>
-                    </div>
 
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ width: "200px" }}
-                    >
-                      <span className="">
-                        {horario.horaApertura} am - {horario.horaCierre} pm
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <table className="table mb-0">
+                <thead className="table-light">
+                  <tr className="text-center">
+                    <th>Fecha</th>
+                    <th>Horario</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {listaHorarios
+                    .sort(
+                      (a, b) =>
+                        diasSemana.indexOf(a.diaSemana) -
+                        diasSemana.indexOf(b.diaSemana)
+                    )
+                    .map((horario) => (
+                      <tr
+                        key={horario.id}
+                        className="text-center"
+                        style={{ height: "45px" }}
+                      >
+                        <td>
+                          {horario.diaSemana}
+                        </td>
+
+                        <td>
+                          {horario.horaApertura} am - {horario.horaCierre} pm
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
+
             {/***************** VISTA EDITAR *****************/}
             <div
-              className="flex-column bg-success gap-2"
+              className="flex-column gap-2"
               style={{ display: `${activateVistaHorario ? "flex" : "none"}` }}
             >
               {listaHorarios
@@ -273,37 +291,37 @@ export default function Disponibilidad() {
                 .map((horario) => (
                   <div
                     key={horario.id}
-                    className="d-flex justify-content-around align-items-center bg-info px-3 gap-0"
-                    style={{ height: "45px" }}
+                    className="d-flex justify-content-around align-items-center px-3 gap-0 rounded-1 bg-light"
+                    style={{ height: "45px", border: "1px solid rgba(0, 0, 0, 0.125)" }}
                   >
                     <label className="fw-bold" style={{ width: "70px" }}>
                       {horario.diaSemana}
                     </label>
 
                     {/* Input hora apertura */}
+                    <span>Inicio</span>
                     <input
                       className="text-center form-control w-25"
                       type="time"
                       value={horario.horaApertura}
                       onChange={(e) =>
-                        detectarCambio(
+                        detectarCambioHorario(
                           horario.id,
                           e.target.value,
                           "horaApertura"
                         )
                       }
                     />
-                    <span>AM</span>
                     {/* Input hora cierre */}
+                    <span>Fin</span>
                     <input
                       className="text-center form-control w-25"
                       type="time"
                       value={horario.horaCierre}
                       onChange={(e) =>
-                        detectarCambio(horario.id, e.target.value, "horaCierre")
+                        detectarCambioHorario(horario.id, e.target.value, "horaCierre")
                       }
                     />
-                    <span>PM</span>
                   </div>
                 ))}
             </div>
@@ -311,20 +329,19 @@ export default function Disponibilidad() {
 
           {/*************************************** TURNOS *************************************************/}
           <div
-            className="bg-success d-flex flex-column gap-2"
-            style={{ gridRow: "5/7", gridColumn: "1/7" }}
+            className="responsive-turnos-diponibilidad d-flex flex-column gap-3"
           >
-            <div className="d-flex justify-content-around bg-danger py-1">
-              <h4 className="mb-0 p-2">Turnos</h4>
+            <div className="d-flex justify-content-around py-1 rounded-1" style={{ backgroundColor: "#45537A" }}>
+              <h5 className="responsive-h5 mb-0 p-2 text-light">Turnos</h5>
               <div
                 className="justify-content-end w-50"
                 style={{ display: `${activateVistaTurno ? "none" : "flex"}` }}
               >
                 <button
-                  className="btn btn-info p-0"
+                  className="btn text-light p-0 px-2"
                   onClick={() => setActiveVistaTurno(!activateVistaTurno)}
                 >
-                  Editar
+                  <FaEdit className="fs-4" />
                 </button>
               </div>
 
@@ -333,53 +350,57 @@ export default function Disponibilidad() {
                 style={{ display: `${activateVistaTurno ? "flex" : "none"}` }}
               >
                 <button
-                  className="btn btn-info py-0"
+                  className="btn text-light py-0"
                   onClick={() => actualizarTurnos()}
                 >
-                  Actualizar
+                  <IoIosSave className="fs-3"/>
                 </button>
                 <button
-                  className="btn btn-danger  py-0"
+                  className="btn text-light  py-0"
                   onClick={() => setActiveVistaTurno(!activateVistaTurno)}
                 >
-                  X
+                  <IoCloseCircleSharp className="fs-2" />
                 </button>
               </div>
             </div>
 
+
             <div
-              className="flex-column gap-2"
+              className="card table-responsive w-100 rounded-1"
               style={{ display: `${activateVistaTurno ? "none" : "flex"}` }}
             >
-              {listaTurnos
-                .sort(
-                  (a, b) => turnos.indexOf(a.turno) - turnos.indexOf(b.turno)
-                )
-                .map((turno) => (
-                  <div
-                    key={turno.id}
-                    style={{ height: "45px" }}
-                    className="d-flex justify-content-center align-items-center gap-4"
-                  >
-                    <div className="" style={{ width: "100px" }}>
-                      <span className="fw-bold">{turno.turno}</span>
-                    </div>
 
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ width: "200px" }}
-                    >
-                      <span className="">
-                        {turno.horaInicio} am - {turno.horaFin} pm
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <table className="table mb-0">
+                <tbody>
+                  {listaTurnos
+                    .sort(
+                      (a, b) => turnos.indexOf(a.turno) - turnos.indexOf(b.turno)
+                    )
+                    .map((turno) => (
+                      <tr
+                        key={turno.id}
+                        className="text-center"
+                        style={{ height: "49px" }}
+                      >
+                        <td className="" style={{ width: "100px" }}>
+                          {turno.turno}
+                        </td>
+
+                        <td
+                          style={{ width: "200px" }}
+                        >
+                          {formatearHora(turno.horaInicio)} - {formatearHora(turno.horaFin)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+
+              </table>
             </div>
 
             {/***************** VISTA EDITAR *****************/}
             <div
-              className="flex-column bg-success gap-2"
+              className="flex-column gap-2"
               style={{ display: `${activateVistaTurno ? "flex" : "none"}` }}
             >
               {listaTurnos
@@ -389,53 +410,52 @@ export default function Disponibilidad() {
                 .map((turno) => (
                   <div
                     key={turno.id}
-                    className="d-flex justify-content-around align-items-center bg-info px-3 gap-0"
-                    style={{ height: "45px" }}
+                    className="d-flex justify-content-around align-items-center bg-light px-3 gap-0 rounded-1"
+                    style={{ height: "45px", border: "1px solid rgba(0, 0, 0, 0.125)" }}
                   >
                     <label className="fw-bold" style={{ width: "70px" }}>
                       {turno.turno}
                     </label>
 
                     {/* Input hora apertura */}
+                    <span>Inicio</span>
                     <input
                       className="text-center form-control w-25"
                       type="time"
                       value={turno.horaInicio}
                       onChange={(e) =>
-                        detectarCambio(
+                        detectarCambioTurno(
                           turno.id,
                           e.target.value,
                           "horaInicio"
                         )
                       }
                     />
-                    <span>AM</span>
                     {/* Input hora cierre */}
+                    <span>Fin</span>
                     <input
                       className="text-center form-control w-25"
                       type="time"
                       value={turno.horaFin}
                       onChange={(e) =>
-                        detectarCambio(turno.id, e.target.value, "horaFin")
+                        detectarCambioTurno(turno.id, e.target.value, "horaFin")
                       }
                     />
-                    <span>PM</span>
                   </div>
                 ))}
             </div>
           </div>
           {/*************************************** FECHAS BLOQUEADAS *************************************************/}
           <div
-            className="d-flex flex-column bg-warning gap-3"
-            style={{ gridRow: "1/7", gridColumn: "7/16" }}
+            className="responsive-fechas-disponibilidad d-flex flex-column gap-3"
           >
-            <div className="d-flex justify-content-center bg-danger py-2">
-              <h4 className="bg-danger text-center">Fechas Bloqueadas</h4>
+            <div className="d-flex justify-content-center py-2 rounded-1" style={{ backgroundColor: "#45537A" }}>
+              <h5 className="responsive-h5 text-center text-light">Fechas Bloqueadas</h5>
             </div>
 
             <div className="d-flex justify-content-end">
               <button
-                className="btn btn-success w-100 justify-content-center"
+                className="btn btn-success w-100 justify-content-center rounded-1"
                 style={{
                   display: `${activateVistaFechaBloqueada ? "none" : "flex"}`,
                 }}
@@ -458,64 +478,83 @@ export default function Disponibilidad() {
                 </button>
 
                 <button
-                  className="btn btn-danger justify-content-center"
+                  className="btn btn-danger"
                   onClick={() => formatearFechas()}
                 >
-                  X
+                  <MdOutlineClose className="fs-4"/>
                 </button>
               </div>
             </div>
 
             {/***************** LISTADO *****************/}
+
+
+
             <div
-              className="flex-column gap-2"
+              className="card h-100  bg-danger gap-2 rounded-1 bg-light"
               style={{
-                display: `${activateVistaFechaBloqueada ? "none" : "flex"}`,
+                display: `${activateVistaFechaBloqueada ? "none" : "flex"}`, overflowY: "auto",
               }}
             >
-              {listaFechasBloqueadas.map((fecha) => {
-                const [yyyy, mm, dd] = fecha.fecha.split("-");
+              <div 
+                className="responsive-fechas-tabla-disponibilidad table-responsive w-100"
+              >
 
-                const fechaFormateada = dd + "-" + mm + "-" + yyyy;
-                return (
-                  <div
-                    key={fecha.id}
-                    style={{ height: "45px" }}
-                    className="bg-success d-flex justify-content-around align-items-center p-3"
-                  >
-                    <div className="" style={{ width: "100px" }}>
-                      <span className="fw-bold">{fechaFormateada}</span>
-                    </div>
+                <table className="table">
+                  <thead className="table-light">
+                    <tr className="text-center">
+                      <th>Fecha</th>
+                      <th>Motivo</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
 
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ width: "200px" }}
-                    >
-                      <span className="">{fecha.motivo}</span>
-                    </div>
 
-                    <div className="d-flex justify-content-end w-25 gap-2">
-                      <button
-                        className="btn btn-info"
-                        onClick={() => editarFechaBloqueada(fecha)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => eliminarFecha(fecha.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                    {listaFechasBloqueadas
+                      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                      .map((fecha) => {
+                        const [yyyy, mm, dd] = fecha.fecha.split("-");
+
+                        const fechaFormateada = dd + "-" + mm + "-" + yyyy;
+                        return (
+                          <tr
+                            key={fecha.id}
+                            className="text-center align-middle"
+                          >
+                            <td>{fechaFormateada}</td>
+                            <td>{fecha.motivo}</td>
+                            <td>
+                              <div className="d-flex justify-content-center gap-2">
+                                <button
+                                  className="btn text-light"
+                                  style={{ backgroundColor: "#45537A" }}
+                                  onClick={() => editarFechaBloqueada(fecha)}
+                                >
+                                  <FaEdit className="fs-4" />
+                                </button>
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => eliminarFecha(fecha.id)}
+                                >
+                                  <MdDeleteForever className="fs-4"/>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+
+              </div>
             </div>
+
+
 
             {/***************** VISTA EDITAR *****************/}
             <div
-              className="flex-column p-3"
+              className="card flex-column p-3 bg-light"
               style={{
                 display: `${activateVistaFechaBloqueada ? "flex" : "none"}`,
               }}
