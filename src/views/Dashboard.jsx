@@ -58,7 +58,7 @@ export default function Dashboard() {
 
   return (
     <div className="responsive-container container"> 
-       <div className="responsive-horizontal-dashboard p-2 container-fluid d-flex align-items-center d-flex flex-column mt-5" style={{ backgroundColor: "#F0F0F0" }}>
+       <div className="responsive-horizontal-dashboard p-2 container-fluid d-flex align-items-center d-flex flex-column mt-4" style={{ backgroundColor: "#F0F0F0" }}>
 
       <div
       className="responsive-grid-dashboard"

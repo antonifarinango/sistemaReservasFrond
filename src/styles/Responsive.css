@@ -97,20 +97,7 @@
     grid-row: 1 / 5;
 }
 
-@media (max-width:1295px) {
-
-    .responsive-restaurante-configuracion {
-        grid-column: 1 / 7;
-        grid-row: 1 / 5;
-    }
-
-    .responsive-roles-configuracion {
-
-        grid-column: 1 / 7;
-        grid-row: 6 / 11;
-    }
-
-}
+/* MEDIA QUERIES REORDENADAS (mayor → menor) */
 
 @media (max-width:1475px) {
 
@@ -132,110 +119,7 @@
 
 }
 
-@media (max-width:1340px) {
-
-    .responsive-diponibilidad {
-        grid-template-columns: repeat(15, 1fr);
-        grid-template-rows: repeat(30, 1fr);
-    }
-
-    .responsive-fechas-disponibilidad {
-        grid-column: 1 / 16;
-        grid-row: 1 / 70;
-    }
-
-    .responsive-horarios-diponibilidad {
-        grid-column: 1 / 16;
-        grid-row: 74/ 120;
-    }
-
-    .responsive-turnos-diponibilidad {
-        grid-column: 1 / 16;
-        grid-row: 120 / 130;
-
-    }
-
-    .responsive-container-mesas{
-        height: auto !important;
-    }
-
-    .responsive-container-div-mesas{
-        min-height: 99px !important;
-    }
-
-}
-
-
-
-
-@media (max-width:1150px) {
-    .responsive-configuracion-mesas {
-        grid-template-columns: repeat(6, 1fr);
-        grid-template-rows: repeat(6, 1fr);
-    }
-
-    .responsive-mesasConfig-mesas {
-        grid-column: 1 / 7;
-        grid-row: 1 / 2;
-        flex-direction: row !important;
-        flex-wrap: wrap;
-        justify-content: start !important;
-        
-    }
-
-    .responsive-mesasConfig-mesas div {
-        width: 5rem !important;
-    }
-
-    .responsive-h5-config-mesas {
-        display: none;
-    }
-
-    .responsive-edit-mesas {
-        grid-column: 1 / 7;
-        grid-row: 2 / 7;
-    }
-}
-
-
-@media (max-width:1250px) {
-    .responsive-p-mesas {
-        font-size: 13px;
-    }
-}
-
-@media (max-width:1280px) {
-    .responsive-mesas {
-        padding: 0;
-        gap: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .responsive-h5-mesas {
-        font-size: 1rem;
-        margin-bottom: 2px;
-    }
-}
-
-@media (max-width: 1230px) {
-    .responsive-div-procentaje {
-        height: 80% !important;
-        width: 70% !important;
-    }
-
-    .responsive-span-porcentaje {
-        font-size: 45px !important;
-    }
-
-    .responsive-p-pendientes {
-        font-size: 70px !important;
-    }
-}
-
-
-@media (max-width: 1400px) {
+@media (max-width:1400px) {
     .responsive-h5 {
         font-size: 1rem;
     }
@@ -280,14 +164,130 @@
 
 }
 
+@media (max-width:1340px) {
 
-@media (max-width: 950px) and (orientation: landscape)  {
+    .responsive-diponibilidad {
+        grid-template-columns: repeat(15, 1fr);
+        grid-template-rows: repeat(30, 1fr);
+    }
 
-    /* Aplica cuando el dispositivo está en horizontal */
-    
+    .responsive-fechas-disponibilidad {
+        grid-column: 1 / 16;
+        grid-row: 1 / 70;
+    }
+
+    .responsive-horarios-diponibilidad {
+        grid-column: 1 / 16;
+        grid-row: 74/ 120;
+    }
+
+    .responsive-turnos-diponibilidad {
+        grid-column: 1 / 16;
+        grid-row: 120 / 130;
+
+    }
+
+    .responsive-container-mesas{
+        height: auto !important;
+    }
+
+    .responsive-container-div-mesas{
+        min-height: 99px !important;
+    }
+
+}
+
+@media (max-width:1295px) {
+
+    .responsive-restaurante-configuracion {
+        grid-column: 1 / 7;
+        grid-row: 1 / 5;
+    }
+
+    .responsive-roles-configuracion {
+
+        grid-column: 1 / 7;
+        grid-row: 6 / 11;
+    }
+
+}
+
+@media (max-width:1280px) {
+    .responsive-mesas {
+        padding: 0;
+        gap: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .responsive-h5-mesas {
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+}
+
+@media (max-width:1250px) {
+    .responsive-p-mesas {
+        font-size: 13px;
+    }
+}
+
+@media (max-width:1230px) {
+    .responsive-div-procentaje {
+        height: 80% !important;
+        width: 70% !important;
+    }
+
+    .responsive-span-porcentaje {
+        font-size: 45px !important;
+    }
+
+    .responsive-p-pendientes {
+        font-size: 70px !important;
+    }
+}
+
+
+@media (max-width:1150px) {
+    .responsive-configuracion-mesas {
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+    }
+
+    .responsive-mesasConfig-mesas {
+        grid-column: 1 / 7;
+        grid-row: 1 / 2;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: start !important;
+        
+    }
+
+    .responsive-mesasConfig-mesas div {
+        width: 5rem !important;
+    }
+
+    .responsive-h5-config-mesas {
+        display: none;
+    }
+
+    .responsive-edit-mesas {
+        grid-column: 1 / 7;
+        grid-row: 2 / 7;
+    }
+}
+
+
+@media (max-width:950px) and (orientation: landscape)  {
+
     .responsive-h5-mesas{
         font-size: 14px;
     }
+
+}
+
+@media (max-width:1400px) and (orientation: landscape)  {
 
     .responsive-contenedor-general {
         width: 100% !important;
