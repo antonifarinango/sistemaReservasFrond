@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 //ICONOS
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { FaPhone } from "react-icons/fa";
 //SERVICIOS
 import { loggearse } from "../service/loginService";
 import { getHorario } from "../service/disponibilidad";
@@ -231,6 +230,7 @@ export default function ReservaPasoAPaso() {
                     className="form-control"
                     placeholder="ejemplo@correo.com"
                     value={email}
+                    autocomplete="username"
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
@@ -241,6 +241,7 @@ export default function ReservaPasoAPaso() {
                     type={mostrarPass ? "text" : "password"}
                     className="form-control"
                     placeholder="********"
+                    autocomplete="current-password" 
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                     required
@@ -251,7 +252,8 @@ export default function ReservaPasoAPaso() {
                       onClick={() => setMostrarPass(!mostrarPass)}
                     >
                       {mostrarPass ? <FaEyeSlash /> : <FaEye />}
-                    </button></div>
+                    </button>
+                </div>
 
                 </div>
                 <div className="d-grid">

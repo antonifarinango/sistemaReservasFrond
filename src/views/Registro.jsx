@@ -1,6 +1,7 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 
-
+//ICONOS
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 //SERVICIOS
 import { postRegistrarUsuario } from "../service/loginService";
 
@@ -34,6 +35,9 @@ export default function Registro() {
 
     };
 
+
+    const [showPassword, setShowPassword] = useState(false);
+
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <div
@@ -66,6 +70,7 @@ export default function Registro() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
+                            autocomplete="username"
                             placeholder="ejemplo@correo.com"
                             required
                         />
@@ -74,15 +79,25 @@ export default function Registro() {
                     {/* Contraseña */}
                     <div className="mb-3">
                         <label className="form-label">Contraseña</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Ingrese una contraseña"
-                            required
-                        />
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="form-control"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                autoComplete="new-password"
+                                placeholder="Ingrese una contraseña"
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                        </div>
                     </div>
 
                     {/* Confirmar Contraseña */}

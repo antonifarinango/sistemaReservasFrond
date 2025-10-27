@@ -273,9 +273,9 @@ function Mesas() {
                 </label>
                 <input
                   value={numeroMesa}
+                  onChange={(e) => setNumeroMesa(e.target.value)}
                   type="text"
                   className="form-control"
-                  disabled
                 />
 
                 <label className="text-primary fw-bolder">
