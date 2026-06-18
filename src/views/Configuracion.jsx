@@ -17,6 +17,7 @@ export default function Configuracion() {
   //Obtener datos del restaurante
   useEffect(() => {
     getRestauranteId(1).then(setRestaurante);
+    getUsuariosRoles().then(setListaRoles);
   }, [])
 
   //Actualizar datos restaurante
@@ -33,9 +34,9 @@ export default function Configuracion() {
 
       }
 
-      putRestaurante(data, restaurante.id).then(() => {
+      putRestaurante(data, restaurante.id).then((restauranteActualizado) => {
 
-        getRestauranteId(restaurante.id).then(setRestaurante);
+        setRestaurante(restauranteActualizado);
         setActiveVistaRestauranteEditar(false);
 
       })
@@ -124,10 +125,6 @@ export default function Configuracion() {
   }
 
   const orden = ["Superadmin", "Admin", "Mesero"];
-
-  useEffect(() => {
-    getUsuariosRoles().then(setListaRoles);
-  }, [])
 
   return (
     <div className="container-fluid p-0">

@@ -5,7 +5,7 @@ import {jwtDecode} from "jwt-decode";
 export default function ProtectedRoute({ children, rolPermitido }) {
   const token = localStorage.getItem("token");
 
-  if (!token) return <Navigate to="/login" replace />;
+  if (!token) return <Navigate to="/reserva" replace />;
 
   try {
     const decoded = jwtDecode(token);
@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children, rolPermitido }) {
 
     if (decoded.exp < currentTime) {
       localStorage.removeItem("token");
-      return <Navigate to="/login" replace />;
+      return <Navigate to="/reserva" replace />;
     }
 
     if (rolPermitido && decoded.rol !== rolPermitido) {
@@ -22,7 +22,7 @@ export default function ProtectedRoute({ children, rolPermitido }) {
 
   } catch (error) {
     localStorage.removeItem("token");
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/reserva" replace />;
   }
 
   return children;

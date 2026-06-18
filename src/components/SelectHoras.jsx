@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { getHorario } from "../service/disponibilidad";
 
-export default function SelectHoras({ fecha, horas, minutos, onHoraChange }) {
+export default function SelectHoras({ fecha, horas, minutos, value, onHoraChange, reservasMesa = [], editReservaId = null }) {
   const [horasDisponibles, setHorasDisponibles] = useState([]);
-  const [horaSeleccionada, setHoraSeleccionada] = useState("");
   const [horarioDia, setHorarioDia] = useState(null);
 
   // Obtener el horario según el día de la semana
@@ -50,44 +49,75 @@ export default function SelectHoras({ fecha, horas, minutos, onHoraChange }) {
     // Si la hora de fin es anterior al inicio → limpiar todo
     if (fin <= inicio) {
       setHorasDisponibles([]);
-      setHoraSeleccionada("");
-      onHoraChange("");
       return;
     }
 
     const intervalos = [];
     const cursor = new Date(inicio);
+
+    const horasOcupadas = reservasMesa
+      .filter((r) => r.fecha.startsWith(fecha) && r.id !== editReservaId && r.estadoReserva !== "Cancelada")
+      .map((r) => r.fecha.split("T")[1].substring(0, 5));
+
     while (cursor <= fin) {
       const h = String(cursor.getHours()).padStart(2, "0");
       const m = String(cursor.getMinutes()).padStart(2, "0");
-      intervalos.push(`${h}:${m}`);
+      const horaStr = `${h}:${m}`;
+      
+      intervalos.push({
+        hora: horaStr,
+        ocupado: horasOcupadas.includes(horaStr)
+      });
+      
       cursor.setMinutes(cursor.getMinutes() + 30);
     }
 
     setHorasDisponibles(intervalos);
-    setHoraSeleccionada(intervalos[0] || "");
-    onHoraChange(intervalos[0] || "");
+  }, [fecha, horarioDia, horas, minutos, reservasMesa, editReservaId]);
 
-  }, [fecha, horarioDia, horas, minutos]);
+  // Validar que el value actual esté dentro de las horas disponibles
+  useEffect(() => {
+    if (horasDisponibles.length > 0) {
+      // Find the first non-occupied hour if value is empty or not in the list
+      const isValid = horasDisponibles.some(h => h.hora === value && !h.ocupado);
+      
+      if (!isValid && value) {
+        // If the current value is occupied (and it's not our own edited reservation), or not in list
+        // Try to select the first available one
+        const firstAvailable = horasDisponibles.find(h => !h.ocupado);
+        if (firstAvailable) {
+          onHoraChange(firstAvailable.hora);
+        } else {
+          // Si no hay disponibles, limpiar
+          onHoraChange("");
+        }
+      } else if (!value) {
+        const firstAvailable = horasDisponibles.find(h => !h.ocupado);
+        if (firstAvailable) {
+          onHoraChange(firstAvailable.hora);
+        }
+      }
+    } else if (horasDisponibles.length === 0 && value !== "") {
+      onHoraChange("");
+    }
+  }, [horasDisponibles, value, onHoraChange]);
 
   const handleChange = (e) => {
-    const value = e.target.value;
-    setHoraSeleccionada(value);
-    onHoraChange(value);
+    onHoraChange(e.target.value);
   };
   
 
   return (
     <select
       className="form-select"
-      value={horaSeleccionada}
+      value={value || ""}
       onChange={handleChange}
       required
       disabled={horasDisponibles.length === 0}
     >
-      {horasDisponibles.map((hora, i) => (
-        <option key={i} value={hora}>
-          {hora}
+      {horasDisponibles.map((item, i) => (
+        <option key={i} value={item.hora} disabled={item.ocupado}>
+          {item.hora} {item.ocupado ? "(Reservado)" : ""}
         </option>
       ))}
     </select>

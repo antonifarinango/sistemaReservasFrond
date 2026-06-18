@@ -2,6 +2,7 @@ import api from "./axiosConfig";
 
 const API_URL = "/reservas";
 
+
 export const getReservas = async () => {
   const response = await api.get(`${API_URL}/todos`);
   return response.data;
@@ -34,6 +35,7 @@ export const putReserva = async (reserva, idReserva) => {
 
 export const crearReserva = async (reserva) => {
   try {
+
     const response = await api.post(`${API_URL}/crear`, reserva, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

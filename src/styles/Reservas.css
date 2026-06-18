@@ -1,0 +1,38 @@
+.vista-buscar-cliente{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.363);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buscar-cliente{
+    background-color: rgb(191, 191, 216);
+    height: 520px;
+
+}
+
+.div-btn-mesa{
+    position: relative;
+}
+
+.div-aviso-reserva{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(241, 87, 87);
+    position: absolute;
+    height: 16px;
+    padding-bottom: 1px;
+    width: 16px;
+    top: -4px;
+    right: -2px;
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    font-weight: 600;
+}

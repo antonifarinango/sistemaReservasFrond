@@ -1,23 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-export function useWebSocketReserva(onNuevaReserva) {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = onNuevaReserva;
-  }, [onNuevaReserva]);
-
+export function useWebSocketReservaAvisoMesa() {
   useEffect(() => {
     const stompClient = new Client({
       webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
       onConnect: () => {
         stompClient.subscribe("/topic/reservas", (message) => {
           const reserva = JSON.parse(message.body);
-          if (savedCallback.current) {
-            savedCallback.current(reserva);
-          }
+          onNuevaReserva(reserva);
         });
       },
     });

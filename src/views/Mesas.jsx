@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getMesas, getMesaId, putMesa } from "../service/mesasService";
+import { getMesaId, putMesa } from "../service/mesasService";
 
 //ICONOS
 import { FaCog } from "react-icons/fa";
@@ -10,10 +10,12 @@ import "../styles/Mesas.css";
 import logoMesas from "../assets/logo-mesas.png";
 import mesa from "../assets/mesa.png";
 import usePosicionesMesas from "../hooks/usePosicionesMesas";
+import { useMesasContext } from "../context/mesasContext";
 
 function Mesas() {
-  const [mesas, setMesas] = useState([]);
-  const [mesaId, setMesaId] = useState({});
+
+  const { mesas, setMesas } = useMesasContext();
+  const [mesaId, setMesaId] = useState([]);
   const [showView, setShowView] = useState(false);
   const [numeroMesa, setNumeroMesa] = useState("");
   const [capacidadMesa, setCapacidadMesa] = useState("");
@@ -22,11 +24,12 @@ function Mesas() {
   const posiciones = usePosicionesMesas();
 
 
-  //TRAER MESAS
+  /*TRAER MESAS
   useEffect(() => {
     getMesas().then(setMesas);
   }, []);
-  
+  */
+
   //OBTENER ID Y ACTIVAR VISTA
   function handleClick(id) {
     setObtenerId(id);
@@ -40,7 +43,7 @@ function Mesas() {
     }
   }, [obtenerId, showView]);
 
-  
+
   useEffect(() => {
     if (Object.keys(mesaId).length > 0) {
       setNumeroMesa(mesaId.numero || "");
@@ -51,40 +54,55 @@ function Mesas() {
   }, [mesaId]);
 
   //OCUPAR MESA
-  function ocuparMesa(id) {
-    if (Object.keys(mesaId).length > 0) {
-      const modificarMesa = {
-        numero: numeroMesa,
-        capacidad: capacidadMesa,
-        estadoActual: "Ocupada",
-        estado: mesaId.estado,
-        activa: mesaId.activa
-      };
-      console.log(mesaId.reservas);
-      putMesa(modificarMesa, id).then(() => {
-        setShowView(false);
-        getMesas().then(setMesas);
-      });
-    }
-  }
 
-  //LIBERAR MESA
-  function liberarMesa(id) {
-    if (Object.keys(mesaId).length > 0) {
-      const modificarMesa = {
-        numero: numeroMesa,
-        capacidad: capacidadMesa,
-        estadoActual: "Libre",
-        estado: mesaId.estado,
-        activa: mesaId.activa
-      };
+  // OCUPAR MESA
+async function ocuparMesa(id) {
+  if (Object.keys(mesaId).length > 0 && mesaId.estadoActual === "Libre") {
+    const modificarMesa = {
+      numero: numeroMesa,
+      capacidad: capacidadMesa,
+      estadoActual: "Ocupada",
+      estado: mesaId.estado,
+      activa: mesaId.activa
+    };
 
-      putMesa(modificarMesa, id).then(() => {
-        setShowView(false);
-        getMesas().then(setMesas);
-      });
+    try {
+      const mesaActualizada = await putMesa(modificarMesa, id);
+      setMesas((prev) =>
+        prev.map((m) => (m.id === id ? mesaActualizada : m))
+      );
+    } finally {
+      setShowView(false);
     }
+  } else {
+    setShowView(false);
   }
+}
+
+// LIBERAR MESA
+async function liberarMesa(id) {
+  if (Object.keys(mesaId).length > 0 && mesaId.estadoActual === "Ocupada") {
+    const modificarMesa = {
+      numero: numeroMesa,
+      capacidad: capacidadMesa,
+      estadoActual: "Libre",
+      estado: mesaId.estado,
+      activa: mesaId.activa
+    };
+
+    try {
+      const mesaActualizada = await putMesa(modificarMesa, id);
+      setMesas((prev) =>
+        prev.map((m) => (m.id === id ? mesaActualizada : m))
+      );
+    } finally {
+      setShowView(false);
+    }
+    
+  } else {
+    setShowView(false);
+  }
+}
 
   /******************** CONFIGURACION DE MESAS ***************/
 
@@ -106,7 +124,7 @@ function Mesas() {
   }
 
   //ACTUALIZAR MESA
-  function actualizarMesa() {
+  async function actualizarMesa() {
 
     if (idMesa) {
 
@@ -118,9 +136,10 @@ function Mesas() {
         activa: mesaActiva
       }
 
-      putMesa(mesa, idMesa).then(() => {
-        getMesas().then(setMesas);
-      })
+      const mesaActualizada = await putMesa(mesa, idMesa);
+      setMesas((prev) =>
+        prev.map((m) => (m.id === idMesa ? mesaActualizada : m))
+      );
 
     }
 

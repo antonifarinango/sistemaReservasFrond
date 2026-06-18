@@ -479,7 +479,7 @@ export default function Disponibilidad() {
 
                 <button
                   className="btn btn-danger"
-                  onClick={() => formatearHora}
+                  onClick={() => setActiveVistaFechaBloqueada(false)}
                 >
                   <MdOutlineClose className="fs-4"/>
                 </button>

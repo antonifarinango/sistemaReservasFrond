@@ -12,6 +12,9 @@ import { getMesasDisponibles } from "../service/mesasService";
 import { getRestauranteId } from "../service/restaurante";
 import { crearReserva } from "../service/reservasService";
 import { formatearFecha, formatearHora } from "../service/formatearFechaHora";
+import { getHistorialReservas } from "../service/reservasService";
+import { putReserva } from "../service/reservasService";
+import { useWebSocketReserva } from "../hooks/useWebSocketReserva";
 
 //COMPONENTES
 import SelectHoras from "../components/SelectHoras";
@@ -55,12 +58,28 @@ export default function ReservaPasoAPaso() {
     getRestauranteId(1).then(setDatosRestaurante);
   }, [])
 
-   /****************** FIN DATOS RESTAURANTE ***************************/
+  /****************** FIN DATOS RESTAURANTE ***************************/
 
   /**************** LOGIN *************************/
+  const [vistaEditar, setVistaEditar] = useState(false);
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [idUsuario, setIdUsuario] = useState("");
   const [mostrarPass, setMostrarPass] = useState(false);
+  const [historialReservasCliente, setHistorialReservasCliente] = useState([]);
+  const [idReserva, setIdReserva] = useState("");
+  const [mesaGuardadaParaEditar, setMesaGuardadaParaEditar] = useState("");
+
+  const [fechaReserva, setFechaReserva] = useState("");
+  const [horaSeleccionada, setHoraSeleccionada] = useState("");
+  const [diaActual, setDiaActual] = useState([]);
+  const [hora, setHora] = useState("");
+  const [minutos, setMinutos] = useState("");
+  const [diaSemana, setDiaSemana] = useState("");
+  const [mesasDisponibles, setMesasDisponibles] = useState([]);
+  const [cantidadPersonasReserva, setCantidadPersonasReserva] = useState("1");
+  const [mesaSeleccionada, setMesaSeleccionada] = useState(null);
+
   async function obtenerToken(e) {
     e.preventDefault(e)
     try {
@@ -76,6 +95,7 @@ export default function ReservaPasoAPaso() {
         navigate("/administracion-mesero");
       } else if (decoded.rol == "ROLE_Cliente") {
         handleNext(e);
+        setIdUsuario(decoded.usuarioId);
       }
 
     } catch (err) {
@@ -90,17 +110,96 @@ export default function ReservaPasoAPaso() {
 
   /**************** FIN LOGIN *************************/
 
+
+  function cargarHistorial() {
+    if (idUsuario !== "") {
+      getHistorialReservas(idUsuario).then(setHistorialReservasCliente);
+    }
+  }
+
+  useEffect(() => {
+    cargarHistorial();
+  }, [idUsuario]);
+
+  useWebSocketReserva((reserva) => {
+    if (reserva.usuario && reserva.usuario.id === idUsuario) {
+      if (reserva.tipoNotificacion === "ELIMINACION") {
+        setHistorialReservasCliente((prev) => prev.filter((r) => r.id !== reserva.id));
+        return;
+      }
+      setHistorialReservasCliente((prev) => {
+        const existe = prev.some((r) => r.id === reserva.id);
+        if (existe) {
+          return prev.map((r) => (r.id === reserva.id ? reserva : r));
+        } else {
+          return [...prev, reserva];
+        }
+      });
+
+      if (reserva.tipoNotificacion === "CONFIRMACION") {
+        alert(`¡Su reserva para el ${formatearFecha(reserva.fecha.split("T")[0])} a las ${formatearHora(reserva.fecha.split("T")[1])} ha sido confirmada!`);
+      }
+    }
+  });
+
+  function editarReserva(reserva) {
+    setVistaEditar(true);
+    const [fecha, hora] = reserva.fecha.split("T");
+    setFechaReserva(fecha);
+    const [horas, minutos, segundos] = hora.split(":");
+    setHoraSeleccionada(horas + ":" + minutos);
+    setMesaGuardadaParaEditar(reserva.mesa.id);
+    setIdReserva(reserva.id);
+    setCantidadPersonasReserva(reserva.cantidadPersonas);
+    console.log(reserva.fecha);
+  }
+
+  function actualizarReserva() {
+    console.log(`${fechaReserva}T${horaSeleccionada}:00`)
+
+    const confirmar = window.confirm("¿Está seguro de modificar su reserva? Tenga en cuenta que si lo hace, su reserva puede tardar unos minutos en confirmarse.");
+    
+    if (!confirmar) {
+      return;
+    }
+
+    console.log()
+    const reserva = {
+      fecha: `${fechaReserva}T${horaSeleccionada}`,
+      estadoReserva: "Pendiente",
+      servicio: "SinServicio",
+      cantidadPersonas: cantidadPersonasReserva,
+      mesa: mesaSeleccionada,
+      usuario: idUsuario
+    };
+
+    console.log(mesaSeleccionada);
+    console.log(idReserva);
+    if (idReserva != "") {
+      putReserva(reserva, idReserva)
+        .then((data) => {
+          if (data && data.mensaje) {
+            alert(data.mensaje);
+          } else {
+            alert("Reserva actualizada correctamente");
+          }
+          cargarHistorial();
+          
+          setMesasDisponibles([]);
+          setMesaSeleccionada(null);
+          setHoraSeleccionada("");
+          setFechaReserva("");
+          setCantidadPersonasReserva("1");
+          setVistaEditar(false);
+        })
+        .catch((err) => console.error("Error actualizando:", err));
+
+    }
+
+  }
+
   /**************** BUSCAR MESA ************************/
 
-  const [fechaReserva, setFechaReserva] = useState("");
-  const [horaSeleccionada, setHoraSeleccionada] = useState("");
-  const [diaActual, setDiaActual] = useState([]);
-  const [hora, setHora] = useState("");
-  const [minutos, setMinutos] = useState("");
-  const [diaSemana, setDiaSemana] = useState("");
-  const [mesasDisponibles, setMesasDisponibles] = useState([]);
-  const [cantidadPersonasReserva, setCantidadPersonasReserva] = useState("1");
-  const [mesaSeleccionada, setMesaSeleccionada] = useState(null);
 
   //Obtener dia de la semana
   function obtenerDiaSemana(fechaString) {
@@ -163,12 +262,16 @@ export default function ReservaPasoAPaso() {
     }
 
     // Hay fecha y hora → traer mesas disponibles
+    console.log("PPPPPPPPPPPPPPPPPPPPP" + horaSeleccionada);
     getMesasDisponibles(fechaReserva, horaSeleccionada).then((mesas) => {
       setMesasDisponibles(mesas);
 
       // Si la mesa seleccionada ya no está en la lista → limpiar selección
-      if (!mesas.find((m) => m.id === mesaSeleccionada?.id)) {
+      if (!mesas.find((m) => m.id === mesaSeleccionada?.id) && vistaEditar === false) {
         setMesaSeleccionada(null);
+      } else if (!mesas.find((m) => m.id === mesaSeleccionada?.id) && vistaEditar === true) {
+        console.log(mesaGuardadaParaEditar)
+        setMesaSeleccionada(mesaGuardadaParaEditar);
       }
     });
   }, [fechaReserva, horaSeleccionada]);
@@ -176,15 +279,17 @@ export default function ReservaPasoAPaso() {
   /**************** FIN BUSCAR MESA *********************/
 
   function registrarReserva() {
-
+    console.log(mesaSeleccionada);
     if (fechaReserva != "" && mesaSeleccionada != "") {
       const reserva = {
         fecha: `${fechaReserva}T${horaSeleccionada}:00`,
         turno: null,
         cantidadPersonas: cantidadPersonasReserva,
         mesa: mesaSeleccionada,
+        usuario: idUsuario
       };
       crearReserva(reserva).then(() => {
+        cargarHistorial();
         setFechaReserva("");
         setHoraSeleccionada("");
         setCantidadPersonasReserva("1");
@@ -202,8 +307,8 @@ export default function ReservaPasoAPaso() {
 
 
   return (
-    <div className="container py-5" style={{ maxWidth: "700px" }}>
-      <div className="card shadow-lg border-0 rounded-4">
+    <div className="container py-5 d-flex justify-content-center flex-column align-items-center" style={{ maxWidth: "1000px" }}>
+      <div className="card shadow-lg border-0 rounded-4" style={{ minWidth: "700px", maxWidth: "700px" }}>
         <div className="card-body p-4">
 
           {/* Paso actual */}
@@ -230,7 +335,7 @@ export default function ReservaPasoAPaso() {
                     className="form-control"
                     placeholder="ejemplo@correo.com"
                     value={email}
-                    autocomplete="username"
+                    autoComplete="username"
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
@@ -241,7 +346,7 @@ export default function ReservaPasoAPaso() {
                     type={mostrarPass ? "text" : "password"}
                     className="form-control"
                     placeholder="********"
-                    autocomplete="current-password" 
+                    autoComplete="current-password"
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
                     required
@@ -253,7 +358,7 @@ export default function ReservaPasoAPaso() {
                     >
                       {mostrarPass ? <FaEyeSlash /> : <FaEye />}
                     </button>
-                </div>
+                  </div>
 
                 </div>
                 <div className="d-grid">
@@ -275,7 +380,7 @@ export default function ReservaPasoAPaso() {
           )}
 
           {/* Paso 2: Buscar mesa */}
-          {step === 2 && (
+          {step === 2 && vistaEditar === false ? (
             <div>
               <h5 className="fw-bold mb-3">Reservación en {datosRestaurante.nombre}</h5>
               <p>
@@ -372,9 +477,116 @@ export default function ReservaPasoAPaso() {
                   Volver
                 </button>
               </div>
-            </div>
-          )}
 
+            </div>
+
+          ) : step === 2 && vistaEditar ? (
+            <div>
+              <h5 className="fw-bold mb-3 text-success">Editar mi Reservación</h5>
+              <p>
+                <span className="fw-semibold">Horario de atención :</span>{" "}
+                {diaActual.horaApertura && diaActual.horaCierre
+                  ? `${formatearHora(diaActual.horaApertura)} - ${formatearHora(diaActual.horaCierre)}`
+                  : ""}
+              </p>
+
+              <div className="d-flex justify-content-between align-items-center mb-2">
+
+                <div className="w-100">
+                  <div
+                    className="table-responsive"
+                  >
+                    <table
+                      className="table table-bordered"
+
+                    >
+                      <tbody>
+                        <tr className="">
+                          <td> <input
+                            value={fechaReserva}
+                            onChange={(e) => setFechaReserva(e.target.value)}
+                            type="date"
+                            className="form-control border-1"
+                            min={new Date().toLocaleDateString("en-CA")}
+                            required
+                          /></td>
+                          <td>
+                            <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
+                          </td>
+                          <td>
+                            <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
+                              <option value="1">1 persona</option>
+                              <option value="2">2 personas</option>
+                              <option value="3">3 personas</option>
+                              <option value="4">4 personas</option>
+                              <option value="5">5 personas</option>
+                              <option value="6">6 personas</option>
+                              <option value="7">7 personas</option>
+                              <option value="8">8 personas</option>
+                              <option value="9">9 personas</option>
+                              <option value="10">10 personas</option>
+                              <option value="11">11 personas</option>
+                              <option value="12">12 personas</option>
+                              <option value="13">13 personas</option>
+                              <option value="14">14 personas</option>
+                              <option value="15">15 personas</option>
+                              <option value="16">16 personas</option>
+                              <option value="17">17 personas</option>
+                              <option value="18">18 personas</option>
+                              <option value="19">19 personas</option>
+                              <option value="20">20 personas</option>
+                            </select>
+
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <label htmlFor="hora" className="form-label fw-semibold">Seleccionar Mesa</label>
+                <div className="d-flex flex-wrap gap-2 border p-3">
+                  {mesasDisponibles
+                    .sort((a, b) => a.numero - b.numero)
+                    .map((mesa) => {
+                      return (
+                        <button
+                          key={mesa.id}
+                          type="button"
+                          onClick={() => handleSeleccion(mesa.id)}
+                          className={`btn btn-outline-primary ${mesaSeleccionada === mesa.id ? "active" : ""}`}
+                          style={{ width: "90px" }}
+                        >
+                          Mesa {mesa.numero}
+                        </button>
+                      )
+
+                    })}
+
+                </div>
+              </div>
+
+              <div className="d-grid gap-2 mt-4">
+                <button className="btn btn-primary btn-lg" onClick={() => actualizarReserva()}>
+                  Actualizar Reserva
+                </button>
+                <button className="btn btn-outline-secondary" onClick={() => {
+                  setMesasDisponibles([]);
+                  setMesaSeleccionada(null);
+                  setHoraSeleccionada("");
+                  setFechaReserva("");
+                  setCantidadPersonasReserva("1");
+                  setVistaEditar(false);
+                }}>
+                  Volver
+                </button>
+              </div>
+
+            </div>
+          ) : null}
           {/* Paso 3: Confirmación */}
           {step === 3 && (
             <div>
@@ -428,6 +640,52 @@ export default function ReservaPasoAPaso() {
           )}
         </div>
       </div>
+
+
+
+      {step === 2 && (
+        <div className="card shadow-lg border-0 rounded-4 mt-4 container">
+          <div className="card-body p-4">
+            <div>
+              <h5 className="fw-bold mb-3 text-primary">Mis Reservas</h5>
+              <table className="table">
+                <thead className="table-light">
+                  <tr className="text-center">
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>C. Personas</th>
+                    <th>Mesa</th>
+                    <th>Estado</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historialReservasCliente
+                    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                    .map((reserva) => {
+                      const [fecha, hora] = reserva.fecha.split("T");
+                      return (
+
+                        <tr
+                          key={reserva.id}
+                          className="text-center align-middle"
+                        >
+                          <td>{formatearFecha(fecha)}</td>
+                          <td>{formatearHora(hora)}</td>
+                          <td>{reserva.cantidadPersonas} {reserva.cantidadPersonas > 1 ? "personas" : "persona"}</td>
+                          <td>Mesa {reserva.mesa.numero}</td>
+                          <td>{reserva.estadoReserva}</td>
+                          <td><button className="btn btn-success" onClick={() => editarReserva(reserva)}>Modificar Reserva</button></td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

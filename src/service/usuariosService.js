@@ -32,6 +32,24 @@ export const getUsuariosRoles = async () =>{
 
 }
 
+export const getClientes = async () => {
+
+    try {
+        const response = await api.get(`${API_URL}/administracion/todos-clientes`,{
+            headers : {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type" : "application/json"
+            }
+        })
+
+        return response.data;
+
+    } catch (error) {
+        alert(error.response.data.error);
+    }
+
+}
+
 export const putUsuariosRoles = async (usuario ,idUsarioRol) =>{
 
     try {
@@ -51,5 +69,20 @@ export const putUsuariosRoles = async (usuario ,idUsarioRol) =>{
 
     }
 
+}
+
+export const crearUsuarioAdmin = async (usuario) => {
+    try {
+        const response = await api.post(`${API_URL}/administracion/crearUsuario`, usuario, {
+            headers : {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type" : "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        alert(error.response?.data?.error || "Error al crear usuario");
+        throw error;
+    }
 }
 

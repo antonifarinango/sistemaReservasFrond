@@ -1,0 +1,18 @@
+-- Optimizacion de codigo
+    *Uso de useEffect 
+    *Peiticiones al servidor
+    *WebSocket
+
+-- Implementacion de acciones
+    *Asignar clientes desde el dashboard.-------------
+    *Modificar reserva del lado del clientes.--------
+
+-- Correcion de error al modificar la reserva del lado del clientes------
+
+-- WebSocket cuando el cliente modifique la reserva------
+
+-- Iconos mas intuitivos y con nombre en la parte superior------
+
+
+
+---

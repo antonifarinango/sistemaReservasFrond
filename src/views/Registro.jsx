@@ -70,7 +70,7 @@ export default function Registro() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            autocomplete="username"
+                            autoComplete="username"
                             placeholder="ejemplo@correo.com"
                             required
                         />
