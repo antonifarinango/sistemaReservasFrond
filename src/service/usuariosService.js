@@ -46,6 +46,7 @@ export const getClientes = async () => {
 
     } catch (error) {
         alert(error.response.data.error);
+        console.log("Errorrrrrr");
     }
 
 }

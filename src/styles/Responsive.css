@@ -308,11 +308,8 @@
 
 @media (max-width: 1400px) and (orientation: portrait) {
 
-    
-    body{
-        overflow-y: hidden;
-    }
-
+    /* overflow-y: hidden solo aplica al contenedor del panel admin,
+       no al body global para no bloquear el scroll en Inicio */
     .responsive-contenedor-general {
         width: 100% !important;
         height: 865px !important;

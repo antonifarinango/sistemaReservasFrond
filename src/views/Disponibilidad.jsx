@@ -187,7 +187,7 @@ export default function Disponibilidad() {
   return (
     <div className="container-fluid p-0">
       <div className="container h-100 p-0">
-        <h1 className="responsive-h1 mt-3">Disponibilidad</h1>
+        <h1 className="responsive-h1 mt-3 text-dark">Disponibilidad</h1>
 
         <div className="responsive-diponibilidad"
           style={{

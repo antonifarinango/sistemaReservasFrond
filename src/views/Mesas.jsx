@@ -220,7 +220,7 @@ async function liberarMesa(id) {
         </div>
 
         <div className="container h-100 p-0">
-          <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex text-dark align-items-center justify-content-between">
             <h1 className="mt-3">Mesas</h1>
             <div>
               <button className={`mt-3 btn ${showViewConf ? "btn-secondary" : "bg-success text-light"} `} onClick={() => setShowViewConf(!showViewConf)}>

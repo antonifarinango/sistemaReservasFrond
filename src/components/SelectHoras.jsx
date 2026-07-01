@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { getHorario } from "../service/disponibilidad";
 
-export default function SelectHoras({ fecha, horas, minutos, value, onHoraChange, reservasMesa = [], editReservaId = null }) {
+const EMPTY_ARRAY = [];
+
+export default function SelectHoras({ fecha, horas, minutos, value, onHoraChange, reservasMesa = EMPTY_ARRAY, editReservaId = null }) {
   const [horasDisponibles, setHorasDisponibles] = useState([]);
   const [horarioDia, setHorarioDia] = useState(null);
 

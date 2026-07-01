@@ -35,7 +35,7 @@ export default function Clientes() {
   return (
     <div className="responsive-container container">
       <div className="container h-100 p-0">
-      <h1 className="responsive-h1 mt-3">Clientes</h1>
+      <h1 className="responsive-h1 mt-3 text-dark">Clientes</h1>
       <div
         style={{
           borderRadius: "5px",

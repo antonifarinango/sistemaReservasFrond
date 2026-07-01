@@ -54,7 +54,7 @@ export default function Administracion() {
       {/* Sidebar */}
       <Menu show={showSidebar} setShow={setShowSidebar} setView={setView} />
 
-      <div className="flex-grow-1 d-flex flex-column align-items-center">
+      <div className="bg-white flex-grow-1 d-flex flex-column align-items-center">
         <div className="container-fluid d-flex align-items-center justify-content-between" style={{ height: "60px", backgroundColor: "#45537A", boxShadow: "-1px 1px 18px rgba(0, 0, 0, 0.3)" }} >
           <button className="btn btn-secondary text-light border-0 btn-outline-danger ms-5" onClick={() => setShowSidebar(!showSidebar)}>
             ☰

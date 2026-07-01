@@ -158,7 +158,7 @@ export default function ReservaPasoAPaso() {
     console.log(`${fechaReserva}T${horaSeleccionada}:00`)
 
     const confirmar = window.confirm("¿Está seguro de modificar su reserva? Tenga en cuenta que si lo hace, su reserva puede tardar unos minutos en confirmarse.");
-    
+
     if (!confirmar) {
       return;
     }
@@ -184,7 +184,7 @@ export default function ReservaPasoAPaso() {
             alert("Reserva actualizada correctamente");
           }
           cargarHistorial();
-          
+
           setMesasDisponibles([]);
           setMesaSeleccionada(null);
           setHoraSeleccionada("");
@@ -307,8 +307,8 @@ export default function ReservaPasoAPaso() {
 
 
   return (
-    <div className="container py-5 d-flex justify-content-center flex-column align-items-center" style={{ maxWidth: "1000px" }}>
-      <div className="card shadow-lg border-0 rounded-4" style={{ minWidth: "700px", maxWidth: "700px" }}>
+    <div className="bg-white vh-100 vw-100 py-5 d-flex justify-content-center flex-column align-items-center">
+      <div className="card shadow-lg border-2 rounded-4" style={{ minWidth: "700px", maxWidth: "700px" }}>
         <div className="card-body p-4">
 
           {/* Paso actual */}
@@ -411,7 +411,7 @@ export default function ReservaPasoAPaso() {
                             required
                           /></td>
                           <td>
-                            <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
+                            <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
                           </td>
                           <td>
                             <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
@@ -660,25 +660,32 @@ export default function ReservaPasoAPaso() {
                   </tr>
                 </thead>
                 <tbody>
-                  {historialReservasCliente
-                    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
-                    .map((reserva) => {
-                      const [fecha, hora] = reserva.fecha.split("T");
-                      return (
+                  {historialReservasCliente.length > 0 ? (
+                    historialReservasCliente
+                      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                      .map((reserva) => {
+                        const [fecha, hora] = reserva.fecha.split("T");
+                        return (
 
-                        <tr
-                          key={reserva.id}
-                          className="text-center align-middle"
-                        >
-                          <td>{formatearFecha(fecha)}</td>
-                          <td>{formatearHora(hora)}</td>
-                          <td>{reserva.cantidadPersonas} {reserva.cantidadPersonas > 1 ? "personas" : "persona"}</td>
-                          <td>Mesa {reserva.mesa.numero}</td>
-                          <td>{reserva.estadoReserva}</td>
-                          <td><button className="btn btn-success" onClick={() => editarReserva(reserva)}>Modificar Reserva</button></td>
-                        </tr>
-                      );
-                    })}
+                          <tr
+                            key={reserva.id}
+                            className="text-center align-middle"
+                          >
+                            <td>{formatearFecha(fecha)}</td>
+                            <td>{formatearHora(hora)}</td>
+                            <td>{reserva.cantidadPersonas} {reserva.cantidadPersonas > 1 ? "personas" : "persona"}</td>
+                            <td>Mesa {reserva.mesa.numero}</td>
+                            <td>{reserva.estadoReserva}</td>
+                            <td><button className="btn btn-success" onClick={() => editarReserva(reserva)}>Modificar Reserva</button></td>
+                          </tr>
+                        );
+                      })) : (
+                    <tr>
+                      <td colSpan="6" className="text-center">
+                        No tienes reservasiones
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

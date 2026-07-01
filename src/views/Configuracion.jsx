@@ -129,7 +129,7 @@ export default function Configuracion() {
   return (
     <div className="container-fluid p-0">
       <div className="container h-100 p-0">
-        <h1 className="responsive-h1 mt-3">Restaurante</h1>
+        <h1 className="responsive-h1 mt-3 text-dark">Configuración</h1>
 
         <div className="responsive-configuracion"
           style={{

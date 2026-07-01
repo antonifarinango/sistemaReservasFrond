@@ -3,7 +3,7 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 const stompClient = new Client({
-  webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+  webSocketFactory: () => new SockJS(import.meta.env.VITE_WS_URL),
   reconnectDelay: 2000, // reconecta automáticamente si se pierde la conexión
 });
 

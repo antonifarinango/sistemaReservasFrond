@@ -486,7 +486,7 @@ export default function Reservas() {
       </div>
 
       <div className="container h-100 p-0">
-        <h1 className="responsive-h1 mt-3">Reservas</h1>
+        <h1 className="responsive-h1 mt-3 text-dark">Reservas</h1>
 
         <div className="responsive-configuracion-mesas"
           style={{
