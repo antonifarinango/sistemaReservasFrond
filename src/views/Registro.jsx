@@ -121,7 +121,7 @@ export default function Registro() {
                     <div className="text-center mt-3">
                         <small>
                             ¿Ya tienes una cuenta?{" "}
-                            <a href="/login" className="text-decoration-none text-primary">
+                            <a href="/reserva" className="text-decoration-none text-primary">
                                 Inicia sesión
                             </a>
                         </small>
