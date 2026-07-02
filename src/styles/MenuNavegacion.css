@@ -44,6 +44,10 @@
   animation: aparecer 0.4s ease-out forwards;
 }
 
+.menuNavegacion {
+  height: 100vh;
+}
+
 @keyframes aparecer {
   0% {
     opacity: 0;
@@ -72,6 +76,13 @@
 
   .push-visible {
     margin-top: 5px;
+  }
+
+}
+
+@media (max-width:950px) and (orientation: landscape) {
+  .menuNavegacion {
+    height: auto;
   }
 
 }

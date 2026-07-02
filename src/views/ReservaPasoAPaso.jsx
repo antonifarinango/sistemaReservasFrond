@@ -307,8 +307,8 @@ export default function ReservaPasoAPaso() {
 
 
   return (
-    <div className="bg-white vh-100 vw-100 py-5 d-flex justify-content-center flex-column align-items-center">
-      <div className="card shadow-lg border-2 rounded-4" style={{ minWidth: "700px", maxWidth: "700px" }}>
+    <div className="container-fluid bg-white min-vh-100 py-5 d-flex justify-content-center flex-column align-items-center">
+      <div className="card shadow-lg border-2 rounded-4 w-100 mx-auto" style={{ maxWidth: "700px" }}>
         <div className="card-body p-4">
 
           {/* Paso actual */}
@@ -393,54 +393,47 @@ export default function ReservaPasoAPaso() {
               <div className="d-flex justify-content-between align-items-center mb-2">
 
                 <div className="w-100">
-                  <div
-                    className="table-responsive"
-                  >
-                    <table
-                      className="table table-bordered"
-
-                    >
-                      <tbody>
-                        <tr className="">
-                          <td> <input
-                            value={fechaReserva}
-                            onChange={(e) => setFechaReserva(e.target.value)}
-                            type="date"
-                            className="form-control border-1"
-                            min={new Date().toLocaleDateString("en-CA")}
-                            required
-                          /></td>
-                          <td>
-                            <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
-                          </td>
-                          <td>
-                            <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
-                              <option value="1">1 persona</option>
-                              <option value="2">2 personas</option>
-                              <option value="3">3 personas</option>
-                              <option value="4">4 personas</option>
-                              <option value="5">5 personas</option>
-                              <option value="6">6 personas</option>
-                              <option value="7">7 personas</option>
-                              <option value="8">8 personas</option>
-                              <option value="9">9 personas</option>
-                              <option value="10">10 personas</option>
-                              <option value="11">11 personas</option>
-                              <option value="12">12 personas</option>
-                              <option value="13">13 personas</option>
-                              <option value="14">14 personas</option>
-                              <option value="15">15 personas</option>
-                              <option value="16">16 personas</option>
-                              <option value="17">17 personas</option>
-                              <option value="18">18 personas</option>
-                              <option value="19">19 personas</option>
-                              <option value="20">20 personas</option>
-                            </select>
-
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div className="row g-3 mb-3">
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Fecha</label>
+                      <input
+                        value={fechaReserva}
+                        onChange={(e) => setFechaReserva(e.target.value)}
+                        type="date"
+                        className="form-control border-1"
+                        min={new Date().toLocaleDateString("en-CA")}
+                        required
+                      />
+                    </div>
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Hora</label>
+                      <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
+                    </div>
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Personas</label>
+                      <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
+                        <option value="1">1 persona</option>
+                        <option value="2">2 personas</option>
+                        <option value="3">3 personas</option>
+                        <option value="4">4 personas</option>
+                        <option value="5">5 personas</option>
+                        <option value="6">6 personas</option>
+                        <option value="7">7 personas</option>
+                        <option value="8">8 personas</option>
+                        <option value="9">9 personas</option>
+                        <option value="10">10 personas</option>
+                        <option value="11">11 personas</option>
+                        <option value="12">12 personas</option>
+                        <option value="13">13 personas</option>
+                        <option value="14">14 personas</option>
+                        <option value="15">15 personas</option>
+                        <option value="16">16 personas</option>
+                        <option value="17">17 personas</option>
+                        <option value="18">18 personas</option>
+                        <option value="19">19 personas</option>
+                        <option value="20">20 personas</option>
+                      </select>
+                    </div>
                   </div>
 
                 </div>
@@ -493,54 +486,47 @@ export default function ReservaPasoAPaso() {
               <div className="d-flex justify-content-between align-items-center mb-2">
 
                 <div className="w-100">
-                  <div
-                    className="table-responsive"
-                  >
-                    <table
-                      className="table table-bordered"
-
-                    >
-                      <tbody>
-                        <tr className="">
-                          <td> <input
-                            value={fechaReserva}
-                            onChange={(e) => setFechaReserva(e.target.value)}
-                            type="date"
-                            className="form-control border-1"
-                            min={new Date().toLocaleDateString("en-CA")}
-                            required
-                          /></td>
-                          <td>
-                            <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
-                          </td>
-                          <td>
-                            <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
-                              <option value="1">1 persona</option>
-                              <option value="2">2 personas</option>
-                              <option value="3">3 personas</option>
-                              <option value="4">4 personas</option>
-                              <option value="5">5 personas</option>
-                              <option value="6">6 personas</option>
-                              <option value="7">7 personas</option>
-                              <option value="8">8 personas</option>
-                              <option value="9">9 personas</option>
-                              <option value="10">10 personas</option>
-                              <option value="11">11 personas</option>
-                              <option value="12">12 personas</option>
-                              <option value="13">13 personas</option>
-                              <option value="14">14 personas</option>
-                              <option value="15">15 personas</option>
-                              <option value="16">16 personas</option>
-                              <option value="17">17 personas</option>
-                              <option value="18">18 personas</option>
-                              <option value="19">19 personas</option>
-                              <option value="20">20 personas</option>
-                            </select>
-
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div className="row g-3 mb-3">
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Fecha</label>
+                      <input
+                        value={fechaReserva}
+                        onChange={(e) => setFechaReserva(e.target.value)}
+                        type="date"
+                        className="form-control border-1"
+                        min={new Date().toLocaleDateString("en-CA")}
+                        required
+                      />
+                    </div>
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Hora</label>
+                      <SelectHoras fecha={fechaReserva} horas={hora} minutos={minutos} value={horaSeleccionada} onHoraChange={(valor) => setHoraSeleccionada(valor)} />
+                    </div>
+                    <div className="col-12 col-md-4">
+                      <label className="form-label fw-semibold text-muted mb-1 small">Personas</label>
+                      <select name="" id="" value={cantidadPersonasReserva} onChange={(e) => setCantidadPersonasReserva(e.target.value)} className="form-select" required>
+                        <option value="1">1 persona</option>
+                        <option value="2">2 personas</option>
+                        <option value="3">3 personas</option>
+                        <option value="4">4 personas</option>
+                        <option value="5">5 personas</option>
+                        <option value="6">6 personas</option>
+                        <option value="7">7 personas</option>
+                        <option value="8">8 personas</option>
+                        <option value="9">9 personas</option>
+                        <option value="10">10 personas</option>
+                        <option value="11">11 personas</option>
+                        <option value="12">12 personas</option>
+                        <option value="13">13 personas</option>
+                        <option value="14">14 personas</option>
+                        <option value="15">15 personas</option>
+                        <option value="16">16 personas</option>
+                        <option value="17">17 personas</option>
+                        <option value="18">18 personas</option>
+                        <option value="19">19 personas</option>
+                        <option value="20">20 personas</option>
+                      </select>
+                    </div>
                   </div>
 
                 </div>
@@ -618,8 +604,8 @@ export default function ReservaPasoAPaso() {
               )}
 
 
-              <div className="mt-5 d-flex align-items-start justify-content-start" style={{ borderTop: "1px solid black" }}>
-                <div className="col-6 d-flex flex-column mt-3">
+              <div className="mt-5 row" style={{ borderTop: "1px solid black" }}>
+                <div className="col-12 col-md-6 d-flex flex-column mt-3">
                   <p className="mb-2">
                     <span className="fw-semibold">Teléfono :</span> {datosRestaurante.telefono}
                   </p>
@@ -628,7 +614,7 @@ export default function ReservaPasoAPaso() {
                   </p>
                 </div>
 
-                <div className="d-flex align-items-center justify-content-center mt-3">
+                <div className="col-12 col-md-6 d-flex align-items-center mt-3">
                   <p className="mb-0">
                     <span className="fw-semibold">Dirección :</span> {datosRestaurante.direccion} Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate natus optio sunt magni quae quod.
                   </p>
@@ -648,18 +634,19 @@ export default function ReservaPasoAPaso() {
           <div className="card-body p-4">
             <div>
               <h5 className="fw-bold mb-3 text-primary">Mis Reservas</h5>
-              <table className="table">
-                <thead className="table-light">
-                  <tr className="text-center">
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>C. Personas</th>
-                    <th>Mesa</th>
-                    <th>Estado</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead className="table-light">
+                    <tr className="text-center">
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>C. Personas</th>
+                      <th>Mesa</th>
+                      <th>Estado</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
                   {historialReservasCliente.length > 0 ? (
                     historialReservasCliente
                       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
@@ -688,6 +675,7 @@ export default function ReservaPasoAPaso() {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         </div>

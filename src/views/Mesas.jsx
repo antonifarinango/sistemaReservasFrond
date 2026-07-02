@@ -151,17 +151,12 @@ async function liberarMesa(id) {
   return (
     <div className="responsive-container container">
 
-      <div className="container-fluid d-flex flex-column">
-        <div className={`h-100 ${showView ? "verCardMesa" : "ocultarCardMesa"}`}>
+      <div className="container-fluid d-flex flex-column vh-100">
+        <div className={`${showView ? "verCardMesa" : "ocultarCardMesa"}`}>
           <div
             className="responsive-card-mesas p-4 rounded-1"
-            style={{
-              width: "600px",
-              height: "700px",
-              background: "#ffffffff",
-            }}
           >
-            <div className="container-fluid d-flex justify-content-between align-items-center">
+            <div className="container-fluid d-flex div-titulo-card-mesa justify-content-between align-items-center">
               <h1 className="responsive-h1">Mesa {mesaId.numero}</h1>
               <button
                 className="btn btn-danger h-50"
@@ -171,13 +166,13 @@ async function liberarMesa(id) {
               </button>
             </div>
 
-            <div className="container-fluid p-3 d-flex flex-column  align-items-center gap-3">
+            <div className="div-card-mesa container-fluid d-flex flex-column  align-items-center gap-3">
               <div>
-                <img src={mesa} alt="mesa" />
+                <img className="img-card-mesa" src={mesa} alt="mesa" />
               </div>
 
               <div className="d-flex col-10 align-items-center">
-                <label className="form-label col-3 mb-0">Mesa :</label>
+                <label className="form-label col-3 mb-0 text-black">Mesa :</label>
                 <input
                   value={numeroMesa}
                   type="text"
@@ -187,7 +182,7 @@ async function liberarMesa(id) {
                 />
               </div>
               <div className="d-flex col-10 align-items-center">
-                <label className="form-label col-3 mb-0 ">Capacidad :</label>
+                <label className="form-label col-3 mb-0 text-black">Capacidad :</label>
                 <input
                   value={capacidadMesa}
                   type="text"
@@ -197,20 +192,20 @@ async function liberarMesa(id) {
                 />
               </div>
               <div className="d-flex col-10 align-items-center">
-                <label className="form-label col-3 mb-0 ">Estado :</label>
+                <label className="form-label col-3 mb-0 text-black">Estado :</label>
                 <input value={estadoMesa} className="form-control" disabled />
               </div>
             </div>
 
-            <div className="container-fluid d-flex gap-3 justify-content-center mt-4 p-2">
+            <div className="container-fluid div-btns-card-mesa d-flex gap-3 justify-content-center mt-4 p-2">
               <button
-                className="btn btn-success col-6"
+                className="btn-card-mesa btn btn-success col-6"
                 onClick={() => liberarMesa(mesaId.id)}
               >
                 Liberar
               </button>
               <button
-                className="btn btn-primary col-6"
+                className="btn-card-mesa btn btn-primary col-6"
                 onClick={() => ocuparMesa(mesaId.id)}
               >
                 Ocupar

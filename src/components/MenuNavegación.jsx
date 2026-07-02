@@ -24,7 +24,7 @@ function Menu({ show, setView }) {
 
   return (
     <div
-      className={`text-light vh-100 p-3 top-0 start-0 transition-all ${show ? "aparecer" : "desaparecer"
+      className={`menuNavegacion text-light p-3 top-0 start-0 transition-all ${show ? "aparecer" : "desaparecer"
         }`}
       style={{
         backgroundColor: "#45537A",
