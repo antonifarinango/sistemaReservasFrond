@@ -42,8 +42,6 @@ export default function ReservaPasoAPaso() {
         setStep(3);
       }
     }
-    console.log("mesa " + mesaSeleccionada);
-
   }
 
   const handlePrev = () => setStep((prev) => prev - 1);
@@ -86,7 +84,6 @@ export default function ReservaPasoAPaso() {
 
       const data = await loggearse({ usuario: email, contrasenia: pass });
       const decoded = jwtDecode(data.token);
-      console.log(decoded.rol)
       if (decoded.rol == "ROLE_Superadmin") {
         navigate("/administracion-superadmin");
       } else if (decoded.rol == "ROLE_Admin") {
@@ -101,7 +98,6 @@ export default function ReservaPasoAPaso() {
     } catch (err) {
       if (err.response && err.response.status === 403) {
         alert("❌ Credenciales incorrectas");
-        console.log(err.response);
       } else {
         console.error("Error inesperado", err);
       }
@@ -151,19 +147,15 @@ export default function ReservaPasoAPaso() {
     setMesaGuardadaParaEditar(reserva.mesa.id);
     setIdReserva(reserva.id);
     setCantidadPersonasReserva(reserva.cantidadPersonas);
-    console.log(reserva.fecha);
   }
 
   function actualizarReserva() {
-    console.log(`${fechaReserva}T${horaSeleccionada}:00`)
-
     const confirmar = window.confirm("¿Está seguro de modificar su reserva? Tenga en cuenta que si lo hace, su reserva puede tardar unos minutos en confirmarse.");
 
     if (!confirmar) {
       return;
     }
 
-    console.log()
     const reserva = {
       fecha: `${fechaReserva}T${horaSeleccionada}`,
       estadoReserva: "Pendiente",
@@ -173,8 +165,6 @@ export default function ReservaPasoAPaso() {
       usuario: idUsuario
     };
 
-    console.log(mesaSeleccionada);
-    console.log(idReserva);
     if (idReserva != "") {
       putReserva(reserva, idReserva)
         .then((data) => {
@@ -262,7 +252,6 @@ export default function ReservaPasoAPaso() {
     }
 
     // Hay fecha y hora → traer mesas disponibles
-    console.log("PPPPPPPPPPPPPPPPPPPPP" + horaSeleccionada);
     getMesasDisponibles(fechaReserva, horaSeleccionada).then((mesas) => {
       setMesasDisponibles(mesas);
 
@@ -270,7 +259,6 @@ export default function ReservaPasoAPaso() {
       if (!mesas.find((m) => m.id === mesaSeleccionada?.id) && vistaEditar === false) {
         setMesaSeleccionada(null);
       } else if (!mesas.find((m) => m.id === mesaSeleccionada?.id) && vistaEditar === true) {
-        console.log(mesaGuardadaParaEditar)
         setMesaSeleccionada(mesaGuardadaParaEditar);
       }
     });
@@ -279,7 +267,6 @@ export default function ReservaPasoAPaso() {
   /**************** FIN BUSCAR MESA *********************/
 
   function registrarReserva() {
-    console.log(mesaSeleccionada);
     if (fechaReserva != "" && mesaSeleccionada != "") {
       const reserva = {
         fecha: `${fechaReserva}T${horaSeleccionada}:00`,
