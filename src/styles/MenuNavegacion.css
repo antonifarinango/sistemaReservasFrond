@@ -29,6 +29,7 @@
   flex-direction: column;
   display: flex;
   background-color: transparent;
+  background-color: red;
   position: absolute;
   left: 0;
   top: 350px;
@@ -76,6 +77,7 @@
 
   .push-visible {
     margin-top: 5px;
+    overflow: visible;
   }
 
 }
